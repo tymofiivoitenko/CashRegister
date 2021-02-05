@@ -2,6 +2,7 @@ package dao.product;
 
 import connection.ConnectionPool;
 import model.Product;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,18 +10,21 @@ import java.util.List;
 
 // This dao class provides CRUD database operations for the
 // table "Product" in the database
-public class ProductDao {
-    private static final String SELECT_PRODUCT_BY_ID = "SELECT id, name, email, country FROM Product WHERE id =?";
-    private static final String SELECT_ALL_PRODUCTS = "SELECT * FROM Product";
+public class MysqlProductDaoImpl implements ProductDao {
+    private static final Logger LOGGER = Logger.getLogger(MysqlProductDaoImpl.class);
+
+    private static final String SELECT_PRODUCT_BY_ID = "SELECT id, name, email, country FROM Product WHERE id =?;";
+    private static final String SELECT_ALL_PRODUCTS = "SELECT * FROM Product;";
     private static final String DELETE_PRODUCT_SQL = "DELETE FROM Product WHERE id = ?;";
     private static final String UPDATE_PRODUCT_SQL = "UPDATE Product SET productName = ?,quantityInStock= ? where id = ?;";
     private static final String INSERT_PRODUCT_SQL = "INSERT INTO Product (productName, price ,quantityInStock) VALUES "
             + " (?, ?, ?);";
 
-    public ProductDao() {
+    public MysqlProductDaoImpl() {
     }
 
     public void insertProduct(Product product) {
+        LOGGER.info("Inserting product " + product);
 
         // try-with-resource statement will auto close the connection.
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
@@ -30,14 +34,16 @@ public class ProductDao {
             preparedStatement.setDouble(2, product.getPrice());
             preparedStatement.setInt(3, product.getQuantityInStock());
 
-            System.out.println(preparedStatement);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
     }
 
     public List<Product> selectAllProducts() {
+        LOGGER.info("Select all products");
+
         // using try-with-resources to avoid closing resources (boiler plate code)
         List<Product> products = new ArrayList<>();
         // Step 1: Establishing a Connection
@@ -54,35 +60,44 @@ public class ProductDao {
                 String name = rs.getString("productName");
                 double price = rs.getDouble("price");
                 int quantityInStock = rs.getInt("quantityInStock");
+
                 products.add(new Product(id, name, price, quantityInStock));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
         }
         return products;
     }
 
     public boolean updateProduct(Product product) {
+        LOGGER.info("Update product: " + product);
 
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_PRODUCT_SQL);
             statement.setString(1, product.getProductName());
             statement.setInt(2, product.getQuantityInStock());
-            System.out.println(statement);
+            statement.setInt(3, product.getId());
+
             return statement.executeUpdate() > 0;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
         }
         return false;
     }
 
     public boolean deleteProduct(int id) {
+        LOGGER.info("Delete product by id: " + id);
+
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_PRODUCT_SQL);
             statement.setInt(1, id);
+
             return statement.executeUpdate() > 0;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
         }
 
         return false;

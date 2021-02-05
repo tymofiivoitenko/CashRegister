@@ -1,7 +1,8 @@
 package servlets.products;
 
-import dao.product.ProductDao;
+import dao.product.MysqlProductDaoImpl;
 import model.Product;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,17 +14,18 @@ import java.util.List;
 
 @WebServlet("/products")
 public class ProductServlet extends HttpServlet {
-    private ProductDao productDao;
+    private MysqlProductDaoImpl productDao;
+    private static final Logger LOGGER = Logger.getLogger(ProductServlet.class);
 
     public void init() {
-        productDao = new ProductDao();
+        productDao = new MysqlProductDaoImpl();
     }
     public ProductServlet() {
         super();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("Products DoGet");
+        LOGGER.info("Processing get request");
 
         List<Product> products = productDao.selectAllProducts();
 
@@ -32,7 +34,7 @@ public class ProductServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("Products DoPost");
+        LOGGER.info("Processing post request");
     }
 
 }

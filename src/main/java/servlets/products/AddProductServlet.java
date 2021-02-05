@@ -1,6 +1,6 @@
 package servlets.products;
 
-import dao.product.ProductDao;
+import dao.product.MysqlProductDaoImpl;
 import model.Product;
 
 import javax.servlet.RequestDispatcher;
@@ -13,10 +13,10 @@ import java.io.IOException;
 
 @WebServlet("/products/new")
 public class AddProductServlet extends HttpServlet {
-    private ProductDao productDao;
+    private MysqlProductDaoImpl productDao;
 
     public void init() {
-        productDao = new ProductDao();
+        productDao = new MysqlProductDaoImpl();
     }
 
     public AddProductServlet() {

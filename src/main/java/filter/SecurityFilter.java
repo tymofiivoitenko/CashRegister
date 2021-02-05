@@ -1,6 +1,7 @@
 package filter;
 
 import bean.UserAccount;
+import org.apache.log4j.Logger;
 import request.UserRoleRequestWrapper;
 import utils.AppUtils;
 import utils.SecurityUtils;
@@ -14,19 +15,18 @@ import java.util.List;
 
 @WebFilter("/*")
 public class SecurityFilter implements Filter {
-
-    public SecurityFilter() {
-    }
+    private static final Logger LOGGER = Logger.getLogger(SecurityFilter.class);
 
     @Override
     public void destroy() {
+
     }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
+        LOGGER.info("Processing doFilter request");
 
-        System.out.println("DO FILTER");
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
 
@@ -37,25 +37,25 @@ public class SecurityFilter implements Filter {
         UserAccount loginedUser = (UserAccount) request.getSession().getAttribute("loginedUser");
 
         if (servletPath.equals("/login")) {
-            System.out.println("go login");
             try {
                 chain.doFilter(request, response);
             } catch (NumberFormatException ex) {
+                LOGGER.error(ex.getMessage());
                 ex.printStackTrace();
-                System.out.println("CATCHED IT");
             }
 
             return;
         }
+
         HttpServletRequest wrapRequest = request;
 
         if (loginedUser != null) {
+            LOGGER.info("LoginedUser is not null");
 
-            System.out.println("loginedUser is not null");
-            // User Name
+            // Get user Name
             String userName = loginedUser.getUserName();
 
-            // Roles
+            // Get user Roles
             List<String> roles = loginedUser.getRoles();
 
             // Wrap old request by a new Request with userName and Roles information.
@@ -64,16 +64,20 @@ public class SecurityFilter implements Filter {
 
         // Pages must be signed in.
         if (SecurityUtils.isSecurityPage(request)) {
-            System.out.println("signed");
+            LOGGER.info("This page is secured: " + request.toString());
+
             // If the user is not logged in,
             // Redirect to the login page.
             if (loginedUser == null) {
-                System.out.println("login pls");
+                LOGGER.info("User isn't loggedIn. Redirecting on login page....");
+
+                // Take requested URI
                 String requestUri = request.getRequestURI();
 
                 // Store the current page to redirect to after successful login.
                 int redirectId = AppUtils.storeRedirectAfterLoginUrl(request.getSession(), requestUri);
 
+                // Redirect
                 response.sendRedirect(wrapRequest.getContextPath() + "/login?redirectId=" + redirectId);
                 return;
             }
@@ -81,8 +85,7 @@ public class SecurityFilter implements Filter {
             // Check if the user has a valid role?
             boolean hasPermission = SecurityUtils.hasPermission(wrapRequest);
             if (!hasPermission) {
-
-                System.out.println("DENIED");
+                LOGGER.info("User doesn't have permission for this page. Forward to 'Access denied' page....");
                 RequestDispatcher dispatcher //
                         = request.getServletContext().getRequestDispatcher("/views/accessDeniedView.jsp");
 
@@ -92,11 +95,6 @@ public class SecurityFilter implements Filter {
         }
 
         chain.doFilter(wrapRequest, response);
-    }
-
-    @Override
-    public void init(FilterConfig fConfig) throws ServletException {
-
     }
 
 }

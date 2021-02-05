@@ -20,6 +20,7 @@
 <h3 class="text-center">Login Page</h3>
 <br>
 <form class="form-horizontal" action="${pageContext.request.contextPath}/login" method="POST">
+    <input type="hidden" name="redirectId" value="${param.redirectId}" />
     <div class="form-group">
         <label class="control-label col-sm-5">User Name:</label>
         <div class="col-sm-3">
