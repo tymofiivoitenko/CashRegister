@@ -68,14 +68,13 @@ public class LoginServlet extends HttpServlet {
 
         LOGGER.info("User isn't null, checking if there is need for redirecting user on another page ");
         // Redirect user to page, he wanted to access before login
-        if (request.getParameter("redirectId") != null) {
+        if (request.getParameter("redirectId") != null && request.getParameter("redirectId") != "") {
 
             int redirectId = Integer.parseInt(request.getParameter("redirectId"));
             String requestUri = AppUtils.getRedirectAfterLoginUrl(request.getSession(), redirectId);
 
-            LOGGER.info("Redirect to: " + requestUri);
             if (requestUri != null) {
-                System.out.println("req uri isn't null");
+                LOGGER.info("Redirect to: " + requestUri);
                 response.sendRedirect(requestUri);
             }
         } else {

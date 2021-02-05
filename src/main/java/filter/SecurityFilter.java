@@ -25,10 +25,10 @@ public class SecurityFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
-        LOGGER.info("Processing doFilter request");
-
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
+
+        LOGGER.info("Processing doFilter request. Invoked for page: " + request.getServletPath());
 
         String servletPath = request.getServletPath();
 

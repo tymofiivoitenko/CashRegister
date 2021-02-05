@@ -32,9 +32,9 @@
     <br>
 
     <!-- Table with all products from database-->
-    <table cellpadding="2" cellspacing="2" border="1" class="table table-striped table-bordered">
-        <tr>
-            <th>Id</th>
+    <table cellpadding="3" cellspacing="2" border="2" class="table table-striped table-hover">
+        <tr class="text-center">
+            <th >Id</th>
             <th>Name</th>
             <th>Price $</th>
             <th>Quantity In Stock</th>
@@ -46,8 +46,9 @@
                 <td>${product.productName}</td>
                 <td>${product.price}</td>
                 <td>${product.quantityInStock}</td>
-                <td><a href="=request.getRequestURI()/edit?id=<c:out value='${product.id}' />">Edit</a> &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="=request.getRequestURI()/delete?id=<c:out value='${product.id}' />">Delete</a>
+                <td>
+                    <a href=${pageContext.request.getRequestURI()}/edit?id=<c:out value='${product.id}'/>>Edit</a> &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href=${pageContext.request.getRequestURI()}/delete?id=<c:out value='${product.id}'/>>Delete</a>
                 </td>
             </tr>
         </c:forEach>

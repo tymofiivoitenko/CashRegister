@@ -18,7 +18,5 @@
 
 <h3>Home Page</h3>
 
-Hello, This is a home page!
-
 </body>
 </html>

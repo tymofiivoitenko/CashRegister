@@ -1,4 +1,4 @@
-package servlets.shit;
+package servlets.shitToBeDeleted;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;

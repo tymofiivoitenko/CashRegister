@@ -2,6 +2,7 @@ package servlets.products;
 
 import dao.product.MysqlProductDaoImpl;
 import model.Product;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,6 +14,7 @@ import java.io.IOException;
 
 @WebServlet("/products/new")
 public class AddProductServlet extends HttpServlet {
+    private static final Logger LOGGER = Logger.getLogger(AddProductServlet.class);
     private MysqlProductDaoImpl productDao;
 
     public void init() {
@@ -23,16 +25,8 @@ public class AddProductServlet extends HttpServlet {
         super();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("DoGet cp");
-        request.getRequestDispatcher("/views/products/add/addProduct.jsp").include(request, response);
-        System.out.println("s");
-    }
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println(request.getParameter("productName"));
-        System.out.println(request.getParameter("quantityInStock"));
-        System.out.println(request.getParameter("price"));
+        LOGGER.info("Processing post request");
 
         try {
             String productName = request.getParameter("productName");
@@ -41,7 +35,9 @@ public class AddProductServlet extends HttpServlet {
 
             productDao.insertProduct(new Product(productName, price, quantity));
         } catch (Exception e) {
-            System.out.println("failed to create product!!!!!!");
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+
             RequestDispatcher req = request.getRequestDispatcher("/views/products/add/failedToCreateProduct.jsp");
             req.include(request, response);
         }
