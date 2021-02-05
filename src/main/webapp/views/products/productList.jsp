@@ -11,20 +11,27 @@
 <html>
 <head>
     <title>Products</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
+
+<body>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <jsp:include page="/views/_menu.jsp"></jsp:include>
-<body>
+
 
 <div class="container">
 
     <h3 class="text-center">List of Products</h3>
     <hr>
+
+    <!-- Trigger the modal with a button -->
     <div class="container text-left">
-        <a href="<%=request.getRequestURI()%>/new" class="btn btn-success">Add New Product</a>
+        <a type="button" class="btn btn-success" id="addProductBtn">Add New Product</a>
     </div>
     <br>
 
+    <!-- Table with all products from database-->
     <table cellpadding="2" cellspacing="2" border="1" class="table table-striped table-bordered">
         <tr>
             <th>Id</th>
@@ -45,6 +52,66 @@
             </tr>
         </c:forEach>
     </table>
+
+    <!-- Add products Modal -->
+    <div class="modal fade" id="addProductModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Product</h4>
+                </div>
+
+                <form class="form-horizontal" action="${pageContext.request.contextPath}/products/new" method="POST">
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 col-form-label">Product name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="productName"
+                                       placeholder="Enter product name"
+                                       value="${product.productName}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 col-form-label">Price</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="price" placeholder="Enter price"
+                                       value="${product.price}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 col-form-label">Quantity</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="quantityInStock"
+                                       placeholder="Enter quantity"
+                                       value="${product.quantityInStock}">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Add</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#addProductBtn").click(function () {
+            $("#addProductModal").modal();
+        });
+    });
+</script>
+
 </body>
 </html>

@@ -13,14 +13,12 @@
 </head>
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
 <body>
 
 <jsp:include page="_menu.jsp"></jsp:include>
-
 <br class="container">
 <h3 class="text-center">Login Page</h3>
-<br></br>
+<br>
 <form class="form-horizontal" action="${pageContext.request.contextPath}/login" method="POST">
     <div class="form-group">
         <label class="control-label col-sm-5">User Name:</label>

@@ -10,12 +10,12 @@ import java.util.List;
 // This dao class provides CRUD database operations for the
 // table "Product" in the database
 public class ProductDao {
-    private static final String SELECT_PRODUCT_BY_ID = "select id,name,email,country from Product where id =?";
+    private static final String SELECT_PRODUCT_BY_ID = "SELECT id, name, email, country FROM Product WHERE id =?";
     private static final String SELECT_ALL_PRODUCTS = "SELECT * FROM Product";
     private static final String DELETE_PRODUCT_SQL = "DELETE FROM Product WHERE id = ?;";
     private static final String UPDATE_PRODUCT_SQL = "UPDATE Product SET productName = ?,quantityInStock= ? where id = ?;";
-    private static final String INSERT_PRODUCT_SQL = "INSERT INTO Product (productName, quantityInStock) VALUES "
-            + " (?, ?);";
+    private static final String INSERT_PRODUCT_SQL = "INSERT INTO Product (productName, price ,quantityInStock) VALUES "
+            + " (?, ?, ?);";
 
     public ProductDao() {
     }
@@ -27,7 +27,8 @@ public class ProductDao {
 
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PRODUCT_SQL);
             preparedStatement.setString(1, product.getProductName());
-            preparedStatement.setInt(2, product.getQuantityInStock());
+            preparedStatement.setDouble(2, product.getPrice());
+            preparedStatement.setInt(3, product.getQuantityInStock());
 
             System.out.println(preparedStatement);
             preparedStatement.executeUpdate();
