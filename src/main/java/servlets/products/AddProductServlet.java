@@ -1,11 +1,10 @@
 package servlets.products;
 
-import dao.ProductDao;
+import dao.product.ProductDao;
 import model.Product;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

@@ -1,6 +1,6 @@
-package dao;
+package dao.product;
 
-import db.DBManager;
+import connection.ConnectionPool;
 import model.Product;
 
 import java.sql.*;
@@ -23,7 +23,7 @@ public class ProductDao {
     public void insertProduct(Product product) {
 
         // try-with-resource statement will auto close the connection.
-        try (Connection connection = DBManager.getInstance().getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
 
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PRODUCT_SQL);
             preparedStatement.setString(1, product.getProductName());
@@ -41,7 +41,7 @@ public class ProductDao {
         // using try-with-resources to avoid closing resources (boiler plate code)
         List<Product> products = new ArrayList<>();
         // Step 1: Establishing a Connection
-        try (Connection connection = DBManager.getInstance().getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
 
             // Step 2:Create a statement using connection object
             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PRODUCTS);
@@ -64,7 +64,7 @@ public class ProductDao {
 
     public boolean updateProduct(Product product) {
 
-        try (Connection connection = DBManager.getInstance().getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_PRODUCT_SQL);
             statement.setString(1, product.getProductName());
             statement.setInt(2, product.getQuantityInStock());
@@ -77,7 +77,7 @@ public class ProductDao {
     }
 
     public boolean deleteProduct(int id) {
-        try (Connection connection = DBManager.getInstance().getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_PRODUCT_SQL);
             statement.setInt(1, id);
             return statement.executeUpdate() > 0;

@@ -1,15 +1,13 @@
-package dao;
+package dao.user;
 
 import bean.UserAccount;
-import db.DBManager;
-import model.Product;
+import connection.ConnectionPool;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 
 public class UserDao {
     private static final String SELECT_USER_BY_ID = "SELECT username, password, role FROM user WHERE username = ?" +
@@ -19,7 +17,7 @@ public class UserDao {
     public static UserAccount findUser(String userName, String password) {
 
         // try-with-resource statement will auto close the connection.
-        try (Connection connection = DBManager.getInstance().getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
 
             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID);
             preparedStatement.setString(1, userName);

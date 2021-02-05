@@ -1,7 +1,7 @@
 package servlets.login;
 
 import bean.UserAccount;
-import dao.UserDao;
+import dao.user.UserDao;
 import utils.AppUtils;
 
 import javax.servlet.RequestDispatcher;
