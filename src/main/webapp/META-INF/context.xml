@@ -1,0 +1,18 @@
+<Context>
+    <Resource name="jdbc/CashRegisterDB"
+              auth="Container"
+              type="javax.sql.DataSource"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+              validationQuery="SELECT 1"
+              validationInterval="30000"
+              username="root"
+              password="qwerty78"
+              driverClassName="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/CashRegisterDB?useSSL=false"
+              removeAbandoned="true"
+              removeAbandonedTimeout="30"
+              maxActive="15"
+              maxIdle="3"/>
+</Context>
+
+
