@@ -30,8 +30,8 @@ public class AddProductServlet extends HttpServlet {
 
         try {
             String productName = request.getParameter("productName");
-            Integer quantity = Integer.valueOf(request.getParameter("quantityInStock"));
-            double price = Double.valueOf(request.getParameter("price"));
+            Integer quantity = Integer.valueOf(request.getParameter("productQuantity"));
+            double price = Double.valueOf(request.getParameter("productPrice"));
 
             productDao.insertProduct(new Product(productName, price, quantity));
         } catch (Exception e) {

@@ -16,7 +16,8 @@ public class MysqlProductDaoImpl implements ProductDao {
     private static final String SELECT_PRODUCT_BY_ID = "SELECT id, name, email, country FROM Product WHERE id =?;";
     private static final String SELECT_ALL_PRODUCTS = "SELECT * FROM Product;";
     private static final String DELETE_PRODUCT_SQL = "DELETE FROM Product WHERE id = ?;";
-    private static final String UPDATE_PRODUCT_SQL = "UPDATE Product SET productName = ?,quantityInStock= ? where id = ?;";
+    private static final String UPDATE_PRODUCT_SQL = "UPDATE Product SET productName = ?, quantityInStock = ?, " +
+            "price = ? where id = ?;";
     private static final String INSERT_PRODUCT_SQL = "INSERT INTO Product (productName, price ,quantityInStock) VALUES "
             + " (?, ?, ?);";
 
@@ -71,13 +72,14 @@ public class MysqlProductDaoImpl implements ProductDao {
     }
 
     public boolean updateProduct(Product product) {
-        LOGGER.info("Update product: " + product);
+        LOGGER.info("Updating product: " + product);
 
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_PRODUCT_SQL);
             statement.setString(1, product.getProductName());
             statement.setInt(2, product.getQuantityInStock());
-            statement.setInt(3, product.getId());
+            statement.setDouble(3, product.getPrice());
+            statement.setInt(4, product.getId());
 
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {

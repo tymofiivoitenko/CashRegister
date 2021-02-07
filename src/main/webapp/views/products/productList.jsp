@@ -34,7 +34,7 @@
     <!-- Table with all products from database-->
     <table cellpadding="3" cellspacing="2" border="2" class="table table-striped table-hover">
         <tr class="text-center">
-            <th >Id</th>
+            <th>Id</th>
             <th>Name</th>
             <th>Price $</th>
             <th>Quantity In Stock</th>
@@ -46,16 +46,22 @@
                 <td>${product.productName}</td>
                 <td>${product.price}</td>
                 <td>${product.quantityInStock}</td>
-                <td>
-                    <a href=${pageContext.request.getRequestURI()}/edit?id=<c:out value='${product.id}'/>>Edit</a> &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href=${pageContext.request.getRequestURI()}/delete?id=<c:out value='${product.id}'/>>Delete</a>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#editProduct_modal" data-toggle="modal"
+                       data-product-id="${product.id}"
+                       data-product-name="${product.productName}"
+                       data-product-price="${product.price}"
+                       data-product-quantity="${product.quantityInStock}">Edit</a> &nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <a href=${pageContext.request.getRequestURI()}/delete?id=<c:out
+                            value='${product.id}'/>>Delete</a>
                 </td>
             </tr>
         </c:forEach>
     </table>
 
     <!-- Add products Modal -->
-    <div class="modal fade" id="addProductModal" role="dialog">
+    <div class=" modal fade" id="addProductModal" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -79,17 +85,15 @@
                         <div class="form-group">
                             <label class="col-sm-3 col-form-label">Price</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" name="price" placeholder="Enter price"
-                                       value="${product.price}">
+                                <input type="text" class="form-control" name="productPrice" placeholder="Enter price">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="col-sm-3 col-form-label">Quantity</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" name="quantityInStock"
-                                       placeholder="Enter quantity"
-                                       value="${product.quantityInStock}">
+                                <input type="text" class="form-control" name="productQuantity"
+                                       placeholder="Enter quantity">
                             </div>
                         </div>
 
@@ -104,13 +108,75 @@
 
     </div>
 
+    <!-- Edit products Modal -->
+    <div class="modal fade" id="editProduct_modal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <form class="form-horizontal" action="${pageContext.request.contextPath}/products/edit" method="POST">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" id="editProductTitle" name="productId">Edit Product #</h4>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 col-form-label">Product name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="productName"
+                                       placeholder="Enter product name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 col-form-label">Price</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="productPrice" placeholder="Enter price">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 col-form-label">Quantity</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="productQuantity"
+                                       placeholder="Enter quantity">
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="productId">
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Edit</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
 </div>
+
 
 <script>
     $(document).ready(function () {
         $("#addProductBtn").click(function () {
             $("#addProductModal").modal();
         });
+    });
+
+    $('#editProduct_modal').on('show.bs.modal', function (e) {
+        var productId = $(e.relatedTarget).data('product-id');
+        var productName = $(e.relatedTarget).data('product-name');
+        var productPrice = $(e.relatedTarget).data('product-price');
+        var productQuantity = $(e.relatedTarget).data('product-quantity');
+
+        $(e.currentTarget).find('h4[id="editProductTitle"]').append(productId);
+        $(e.currentTarget).find('input[name="productName"]').val(productName);
+        $(e.currentTarget).find('input[name="productPrice"]').val(productPrice);
+        $(e.currentTarget).find('input[name="productQuantity"]').val(productQuantity);
+        $(e.currentTarget).find('input[name="productId"]').val(productId);
     });
 </script>
 
