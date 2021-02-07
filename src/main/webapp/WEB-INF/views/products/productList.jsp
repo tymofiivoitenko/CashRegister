@@ -17,7 +17,7 @@
 
 <body>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<jsp:include page="/views/_menu.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/_menu.jsp"></jsp:include>
 
 
 <div class="container">

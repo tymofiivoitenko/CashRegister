@@ -38,7 +38,7 @@ public class AddProductServlet extends HttpServlet {
             LOGGER.error(e.getMessage());
             e.printStackTrace();
 
-            RequestDispatcher req = request.getRequestDispatcher("/views/products/add/failedToCreateProduct.jsp");
+            RequestDispatcher req = request.getRequestDispatcher("/WEB-INF/views/products/add/failedToCreateProduct.jsp");
             req.include(request, response);
         }
 

@@ -87,7 +87,7 @@ public class SecurityFilter implements Filter {
             if (!hasPermission) {
                 LOGGER.info("User doesn't have permission for this page. Forward to 'Access denied' page....");
                 RequestDispatcher dispatcher //
-                        = request.getServletContext().getRequestDispatcher("/views/accessDeniedView.jsp");
+                        = request.getServletContext().getRequestDispatcher("/WEB-INF/views/accessDeniedView.jsp");
 
                 dispatcher.forward(request, response);
                 return;

@@ -21,7 +21,7 @@ public class EmployeeTaskServlet extends HttpServlet {
             throws ServletException, IOException {
 
         RequestDispatcher dispatcher = this.getServletContext()
-                .getRequestDispatcher("/views/employeeTaskView.jsp");
+                .getRequestDispatcher("/WEB-INF/views/employeeTaskView.jsp");
 
         dispatcher.forward(request, response);
     }

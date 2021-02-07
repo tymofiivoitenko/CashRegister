@@ -30,7 +30,7 @@ public class ProductServlet extends HttpServlet {
         List<Product> products = productDao.selectAllProducts();
 
         request.setAttribute("products", products);
-        request.getRequestDispatcher("/views/products/productList.jsp").include(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/products/productList.jsp").include(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
