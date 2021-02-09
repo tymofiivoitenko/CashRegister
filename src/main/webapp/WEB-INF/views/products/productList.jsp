@@ -11,12 +11,13 @@
 <html>
 <head>
     <title>Products</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
 <jsp:include page="/WEB-INF/views/_menu.jsp"></jsp:include>
 
 
@@ -32,26 +33,28 @@
     <br>
 
     <!-- Table with all products from database-->
-    <table cellpadding="3" cellspacing="2" border="2" class="table table-striped table-hover">
+    <table cellpadding="3" cellspacing="2" border="2" class="text-center table table-striped table-hover">
         <tr class="text-center">
-            <th>Id</th>
-            <th>Name</th>
-            <th>Price $</th>
-            <th>Quantity In Stock</th>
-            <th>Actions</th>
+            <th class="text-center" data-defaultsort="desc">Id</th>
+            <th class="text-center" style="width: 60%">Product Name</th>
+            <th class="text-center">Price $</th>
+            <th class="text-center">Quantity</th>
+            <th class="text-center">Unit</th>
+            <th class="text-center">Actions</th>
         </tr>
         <c:forEach var="product" items="${products}">
             <tr>
                 <td>${product.id}</td>
-                <td>${product.productName}</td>
+                <td>${product.name}</td>
                 <td>${product.price}</td>
-                <td>${product.quantityInStock}</td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#editProduct_modal" data-toggle="modal"
+                <td>${product.quantity}</td>
+                <td>${product.unit}</td>
+                <td><a href="#editProduct_modal" data-toggle="modal"
                        data-product-id="${product.id}"
-                       data-product-name="${product.productName}"
+                       data-product-name="${product.name}"
                        data-product-price="${product.price}"
-                       data-product-quantity="${product.quantityInStock}">Edit</a> &nbsp;&nbsp;&nbsp;&nbsp;
+                       data-product-quantity="${product.quantity}"
+                       data-product-unit="${product.unit}">Edit</a> &nbsp;&nbsp;&nbsp;&nbsp;
 
                     <a href=${pageContext.request.getRequestURI()}/delete?id=<c:out
                             value='${product.id}'/>>Delete</a>
@@ -73,29 +76,7 @@
                 <form class="form-horizontal" action="${pageContext.request.contextPath}/products/new" method="POST">
                     <div class="modal-body">
 
-                        <div class="form-group">
-                            <label class="col-sm-3 col-form-label">Product name</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="productName"
-                                       placeholder="Enter product name"
-                                       value="${product.productName}">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 col-form-label">Price</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="productPrice" placeholder="Enter price">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 col-form-label">Quantity</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="productQuantity"
-                                       placeholder="Enter quantity">
-                            </div>
-                        </div>
+                        <jsp:include page="/WEB-INF/views/products/_submitProductForm.jsp"></jsp:include>
 
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-success">Add</button>
@@ -121,28 +102,7 @@
 
                     <div class="modal-body">
 
-                        <div class="form-group">
-                            <label class="col-sm-3 col-form-label">Product name</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="productName"
-                                       placeholder="Enter product name">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 col-form-label">Price</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="productPrice" placeholder="Enter price">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 col-form-label">Quantity</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="productQuantity"
-                                       placeholder="Enter quantity">
-                            </div>
-                        </div>
+                        <jsp:include page="/WEB-INF/views/products/_submitProductForm.jsp"></jsp:include>
 
                         <input type="hidden" name="productId">
 
@@ -158,7 +118,6 @@
     </div>
 </div>
 
-
 <script>
     $(document).ready(function () {
         $("#addProductBtn").click(function () {
@@ -171,11 +130,13 @@
         var productName = $(e.relatedTarget).data('product-name');
         var productPrice = $(e.relatedTarget).data('product-price');
         var productQuantity = $(e.relatedTarget).data('product-quantity');
+        var productUnit = $(e.relatedTarget).data('product-unit');
 
         $(e.currentTarget).find('h4[id="editProductTitle"]').append(productId);
         $(e.currentTarget).find('input[name="productName"]').val(productName);
         $(e.currentTarget).find('input[name="productPrice"]').val(productPrice);
         $(e.currentTarget).find('input[name="productQuantity"]').val(productQuantity);
+        $(e.currentTarget).find('select[id="product-unit-select"]').val(productUnit);
         $(e.currentTarget).find('input[name="productId"]').val(productId);
     });
 </script>

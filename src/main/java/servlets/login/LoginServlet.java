@@ -3,6 +3,7 @@ package servlets.login;
 import bean.UserAccount;
 import dao.user.MysqlUserDaoImpl;
 import dao.user.UserDao;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import utils.AppUtils;
 
@@ -44,7 +45,7 @@ public class LoginServlet extends HttpServlet {
         LOGGER.info("Processing post request");
 
         String userName = request.getParameter("userName");
-        String password = request.getParameter("password");
+        String password = DigestUtils.sha256Hex(request.getParameter("password"));
 
         LOGGER.info("Checking database for username: " + userName);
         // Lookup for user in database

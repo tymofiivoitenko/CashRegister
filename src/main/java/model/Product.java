@@ -2,21 +2,24 @@ package model;
 
 public class Product {
     private int id;
-    private String productName;
+    private String name;
     private double price;
-    private int quantityInStock;
+    private int quantity;
+    private String unit;
 
-    public Product(int id, String productName, double price, int quantityInStock) {
+    public Product(int id, String name, double price, int quantity, String unit) {
         this.id = id;
-        this.productName = productName;
+        this.name = name;
         this.price = price;
-        this.quantityInStock = quantityInStock;
+        this.quantity = quantity;
+        this.unit = unit;
     }
 
-    public Product(String productName, double price, int quantityInStock) {
-        this.productName = productName;
+    public Product(String name, double price, int quantity, String unit) {
+        this.name = name;
         this.price = price;
-        this.quantityInStock = quantityInStock;
+        this.quantity = quantity;
+        this.unit = unit;
     }
 
     public int getId() {
@@ -27,20 +30,20 @@ public class Product {
         this.id = id;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getName() {
+        return name;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public int getQuantityInStock() {
-        return quantityInStock;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setQuantityInStock(int quantityInStock) {
-        this.quantityInStock = quantityInStock;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public double getPrice() {
@@ -51,13 +54,21 @@ public class Product {
         this.price = price;
     }
 
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
                 "id=" + id +
-                ", productName='" + productName + '\'' +
+                ", productName='" + name + '\'' +
                 ", price=" + price +
-                ", quantityInStock=" + quantityInStock +
+                ", quantityInStock=" + quantity +
                 '}';
     }
 }
