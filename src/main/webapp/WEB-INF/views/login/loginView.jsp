@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <body>
 
-<jsp:include page="_menu.jsp"></jsp:include>
+<jsp:include page="../_navbar.jsp"></jsp:include>
 <br class="container">
 <h3 class="text-center">Login Page</h3>
 <br>

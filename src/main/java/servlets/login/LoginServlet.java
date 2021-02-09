@@ -34,7 +34,7 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         LOGGER.info("Processing get request");
-        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/WEB-INF/views/loginView.jsp");
+        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/WEB-INF/views/login/loginView.jsp");
 
         dispatcher.forward(request, response);
     }
@@ -58,7 +58,7 @@ public class LoginServlet extends HttpServlet {
 
             String errorMessage = "Invalid username or password";
             request.setAttribute("errorMessage", errorMessage);
-            RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/WEB-INF/views/loginView.jsp");
+            RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/WEB-INF/views/login/loginView.jsp");
 
             dispatcher.forward(request, response);
             return;

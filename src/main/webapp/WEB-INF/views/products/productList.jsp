@@ -18,7 +18,7 @@
 
 <body>
 
-<jsp:include page="/WEB-INF/views/_menu.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/_navbar.jsp"></jsp:include>
 
 
 <div class="container">
