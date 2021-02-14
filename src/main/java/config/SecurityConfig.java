@@ -5,6 +5,8 @@ import java.util.*;
 public class SecurityConfig {
 
     public static final String ROLE_MANAGER = "MANAGER";
+    public static final String ROLE_ADMIN = "ADMIN";
+    public static final String ROLE_CASHIER = "CASHIER";
     public static final String ROLE_EMPLOYEE = "EMPLOYEE";
     public static final String ROLE_COMMODITY_EXPERT = "COMMODITY_EXPERT";
 
@@ -20,20 +22,26 @@ public class SecurityConfig {
 
         mapConfig.put(ROLE_EMPLOYEE, urlPatterns);
 
-        // Configure For "MANAGER" Role.
-        urlPatterns= new ArrayList<>();
+        // Configure For "ADMIN" Role.
+        urlPatterns = new ArrayList<>();
         urlPatterns.add("/userInfo");
         urlPatterns.add("/managerTask");
+        urlPatterns.add("/admin");
 
-        mapConfig.put(ROLE_MANAGER, urlPatterns);
+        mapConfig.put(ROLE_ADMIN, urlPatterns);
 
         // Configure For "Commodity Expert" Role.
-        urlPatterns= new ArrayList<>();
+        urlPatterns = new ArrayList<>();
         urlPatterns.add("/products");
         urlPatterns.add("/createProducts");
 
         mapConfig.put(ROLE_COMMODITY_EXPERT, urlPatterns);
 
+        // Configure For "CASHIER" Role.
+        urlPatterns = new ArrayList<>();
+        urlPatterns.add("/catalog");
+
+        mapConfig.put(ROLE_CASHIER, urlPatterns);
     }
 
     public static Set<String> getAllAppRoles() {

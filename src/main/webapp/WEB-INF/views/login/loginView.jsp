@@ -19,8 +19,9 @@
 <br class="container">
 <h3 class="text-center">Login Page</h3>
 <br>
-<form class="form-horizontal" action="${pageContext.request.contextPath}/login" method="POST">
-    <input type="hidden" name="redirectId" value="${param.redirectId}" />
+<form name="loginForm" class="form-horizontal" onsubmit="required()" action="${pageContext.request.contextPath}/login"
+      method="POST">
+    <input type="hidden" name="redirectId" value="${param.redirectId}"/>
     <div class="form-group">
         <label class="control-label col-sm-5">User Name:</label>
         <div class="col-sm-3">
@@ -47,5 +48,19 @@
     </div>
 </form>
 </div>
+
+
+<script>function required() {
+    var empt = document.loginForm.userName.value;
+    if (empt === "") {
+        //alert("Please input a Value");
+        return false;
+    } else {
+        //alert('Code has accepted : you can try another');
+        return true;
+    }
+}
+</script>
+
 </body>
 </html>

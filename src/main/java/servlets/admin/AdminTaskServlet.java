@@ -1,4 +1,4 @@
-package servlets.shitToBeDeleted;
+package servlets.admin;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/managerTask")
-public class ManagerTaskServlet extends HttpServlet {
+@WebServlet("/admin")
+public class AdminTaskServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    public ManagerTaskServlet() {
+    public AdminTaskServlet() {
         super();
     }
 
@@ -21,7 +21,7 @@ public class ManagerTaskServlet extends HttpServlet {
             throws ServletException, IOException {
 
         RequestDispatcher dispatcher = this.getServletContext()
-                .getRequestDispatcher("/WEB-INF/views/managerTaskView.jsp");
+                .getRequestDispatcher("/WEB-INF/views/adminTaskView.jsp");
 
         dispatcher.forward(request, response);
     }

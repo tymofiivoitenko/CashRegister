@@ -1,13 +1,24 @@
 package model;
 
+import java.util.Arrays;
+
 public class Product {
     private int id;
     private String name;
     private double price;
-    private int quantity;
+    private double quantity;
     private String unit;
+    private byte[] imageData;
+    private String imageFileName;
 
-    public Product(int id, String name, double price, int quantity, String unit) {
+    public Product(String name, double price, String unit) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.unit = unit;
+    }
+
+    public Product(int id, String name, double price, double quantity, String unit) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -15,11 +26,20 @@ public class Product {
         this.unit = unit;
     }
 
-    public Product(String name, double price, int quantity, String unit) {
+    public Product(String name, double price, double quantity, String unit) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.unit = unit;
+    }
+
+    public Product(String name, double price, double quantity, String unit, String imageFileName, byte[] imageData) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.unit = unit;
+        this.imageData = imageData;
+        this.imageFileName = imageFileName;
     }
 
     public int getId() {
@@ -38,11 +58,11 @@ public class Product {
         this.name = name;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 
@@ -62,13 +82,32 @@ public class Product {
         this.unit = unit;
     }
 
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+
+    public String getImageFileName() {
+        return imageFileName;
+    }
+
+    public void setImageFileName(String imageFileName) {
+        this.imageFileName = imageFileName;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
                 "id=" + id +
-                ", productName='" + name + '\'' +
+                ", name='" + name + '\'' +
                 ", price=" + price +
-                ", quantityInStock=" + quantity +
+                ", quantity=" + quantity +
+                ", unit='" + unit + '\'' +
+                ", imageData=" + Arrays.toString(imageData) +
+                ", imageFileName='" + imageFileName + '\'' +
                 '}';
     }
 }

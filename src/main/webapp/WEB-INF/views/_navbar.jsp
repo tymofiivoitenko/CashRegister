@@ -15,9 +15,9 @@
             <a class="navbar-brand">Cash Register</a>
         </div>
         <ul class="nav navbar-nav">
-            <li><a href="${pageContext.request.contextPath}/managerTask">Manager Task</a></li>
-            <li><a href="${pageContext.request.contextPath}/employeeTask">Employee Task</a></li>
-            <li><a href="${pageContext.request.contextPath}/userInfo">User Info</a></li>
+            <li><a href="${pageContext.request.contextPath}/admin">Admin</a></li>
+            <li><a href="${pageContext.request.contextPath}/catalog">Catalog</a></li>
+            <li><a href="${pageContext.request.contextPath}/receipts">Receipts</a></li>
             <li><a href="${pageContext.request.contextPath}/products">Products</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">

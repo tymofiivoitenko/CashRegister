@@ -2,15 +2,22 @@ package model;
 
 public class Item {
 
+    private int id;
     private Product product;
-    private int quantityInCheck;
+    private int quantity;
 
     public Item() {
     }
 
-    public Item(Product product, int quantityInCheck) {
+    public Item(Product product, int quantity) {
         this.product = product;
-        this.quantityInCheck = quantityInCheck;
+        this.quantity = quantity;
+    }
+
+    public Item(int id, Product product, int quantity) {
+        this.id = id;
+        this.product = product;
+        this.quantity = quantity;
     }
 
     public Product getProduct() {
@@ -21,11 +28,29 @@ public class Item {
         this.product = product;
     }
 
-    public int getQuantityInCheck() {
-        return quantityInCheck;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setQuantityInCheck(int quantityInCheck) {
-        this.quantityInCheck = quantityInCheck;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", product=" + product +
+                ", quantity=" + quantity +
+                '}';
     }
 }

@@ -1,7 +1,7 @@
 package dao.user;
 
 import bean.UserAccount;
-import connection.ConnectionPool;
+import connection.DBManager;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ public class MysqlUserDaoImpl implements UserDao{
         LOGGER.info("Find user by username: <" + userName + "> and password");
         
         // try-with-resource statement will auto close the connection.
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = DBManager.getInstance().getConnection()) {
 
             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID);
             preparedStatement.setString(1, userName);

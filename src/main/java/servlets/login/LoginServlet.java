@@ -21,7 +21,6 @@ public class LoginServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(LoginServlet.class);
     private UserDao userDao;
 
-
     public LoginServlet() {
         super();
     }

@@ -1,10 +1,16 @@
 package dao.product;
 
-import connection.ConnectionPool;
+import connection.DBManager;
 import model.Product;
 import org.apache.log4j.Logger;
 
-import java.sql.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +19,8 @@ import java.util.List;
 public class MysqlProductDaoImpl implements ProductDao {
     private static final Logger LOGGER = Logger.getLogger(MysqlProductDaoImpl.class);
 
-    private static final String SELECT_PRODUCT_BY_ID = "SELECT id, name, email, country FROM Product WHERE id =?;";
-    private static final String SELECT_ALL_PRODUCTS_OLD = "SELECT * FROM Product;";
+    private static final String SELECT_PRODUCT_BY_ID = "SELECT * FROM Product WHERE id =?;";
+    private static final String INSERT_PICTURE = "INSERT INTO product_pictures VALUES(?, ?);";
     private static final String SELECT_ALL_PRODUCTS = "" +
             "SELECT product.id, product.name, product.price, product.quantity, product_unit.symbol \n" +
             "FROM Product \n" +
@@ -49,12 +55,12 @@ public class MysqlProductDaoImpl implements ProductDao {
         LOGGER.info("Inserting product " + product);
 
         // try-with-resource statement will auto close the connection.
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = DBManager.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PRODUCT_SQL);
 
             preparedStatement.setString(1, product.getName());
             preparedStatement.setDouble(2, product.getPrice());
-            preparedStatement.setInt(3, product.getQuantity());
+            preparedStatement.setDouble(3, product.getQuantity());
             preparedStatement.setString(4, product.getUnit());
 
             preparedStatement.executeUpdate();
@@ -70,7 +76,7 @@ public class MysqlProductDaoImpl implements ProductDao {
         // using try-with-resources to avoid closing resources (boiler plate code)
         List<Product> products = new ArrayList<>();
         // Step 1: Establishing a Connection
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = DBManager.getInstance().getConnection()) {
 
             // Step 2:Create a statement using connection object
             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PRODUCTS);
@@ -95,13 +101,42 @@ public class MysqlProductDaoImpl implements ProductDao {
         return products;
     }
 
+    @Override
+    public Product selectProduct(int id) {
+        LOGGER.info("Find product by id: <" + id + ">");
+
+        // try-with-resource statement will auto close the connection.
+        try (Connection connection = DBManager.getInstance().getConnection()) {
+
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PRODUCT_BY_ID);
+            preparedStatement.setInt(1, id);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            // Process the ResultSet object.
+            while (rs.next()) {
+                String productName = rs.getString("name");
+                Double price = rs.getDouble("price");
+                Double quantity = rs.getDouble("quantity");
+                String unit = rs.getString("unit");
+
+                return new Product(id, productName, price, quantity, unit);
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public boolean updateProduct(Product product) {
         LOGGER.info("Updating product: " + product);
 
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = DBManager.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_PRODUCT_SQL);
             statement.setString(1, product.getName());
-            statement.setInt(2, product.getQuantity());
+            statement.setDouble(2, product.getQuantity());
             statement.setDouble(3, product.getPrice());
             statement.setString(4, product.getUnit());
             statement.setInt(5, product.getId());
@@ -117,13 +152,33 @@ public class MysqlProductDaoImpl implements ProductDao {
     public boolean deleteProduct(int id) {
         LOGGER.info("Delete product by id: " + id);
 
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = DBManager.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_PRODUCT_SQL);
             statement.setInt(1, id);
 
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean insertImage() {
+        LOGGER.info("Insert image");
+
+        try (Connection connection = DBManager.getInstance().getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(INSERT_PICTURE);
+            statement.setInt(1, 1);
+            InputStream in = new FileInputStream("/Users/tymofiivoitenko/Downloads/product.png");
+            statement.setBlob(2, in);
+
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
