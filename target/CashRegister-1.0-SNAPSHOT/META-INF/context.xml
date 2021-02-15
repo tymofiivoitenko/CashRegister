@@ -8,7 +8,7 @@
               username="root"
               password="qwerty78"
               driverClassName="com.mysql.jdbc.Driver"
-              url="jdbc:mysql://localhost:3306/CashRegisterDB?useSSL=false"
+              url="jdbc:mysql://localhost:3306/CashRegisterDB?allowPublicKeyRetrieval=true"
               removeAbandoned="true"
               removeAbandonedTimeout="30"
               maxActive="15"

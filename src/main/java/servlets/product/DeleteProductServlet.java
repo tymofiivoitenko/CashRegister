@@ -1,4 +1,4 @@
-package servlets.products;
+package servlets.product;
 
 import dao.product.MysqlProductDaoImpl;
 import org.apache.log4j.Logger;

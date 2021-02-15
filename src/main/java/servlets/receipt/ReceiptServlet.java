@@ -6,6 +6,7 @@ import dao.receipt.MysqlReceiptDaoImpl;
 import dao.receipt.ReceiptDao;
 import model.Item;
 import model.Product;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,10 +18,11 @@ import java.io.IOException;
 import java.util.List;
 
 
-@WebServlet("/cart")
+@WebServlet("/receipt")
 public class ReceiptServlet extends HttpServlet {
-
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(ReceiptServlet.class);
+
     private ProductDao productDao;
     private ReceiptDao receiptDao;
 
@@ -35,82 +37,132 @@ public class ReceiptServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        LOGGER.info("Processing get request");
+
         String action = request.getParameter("action");
+        LOGGER.info("Action: " + action);
 
         if (action == null) {
-            doGet_DisplayCart(request, response);
-        } else {
-            if (action.equalsIgnoreCase("buy")) {
-                doGet_Buy(request, response);
-            } else if (action.equalsIgnoreCase("remove")) {
-                doGet_Remove(request, response);
-            }
+            doGet_Display(request, response);
+            return;
         }
+
+        if (action.equalsIgnoreCase("buy")) {
+            doGet_Buy(request, response);
+            return;
+        }
+
+        if (action.equalsIgnoreCase("remove")) {
+            doGet_Remove(request, response);
+            return;
+        }
+
+        if (action.equalsIgnoreCase("applyChanges")) {
+            doGet_Apply(request, response);
+            return;
+        }
+
+        LOGGER.error("Unexpected action: " + action);
     }
 
-    protected void doGet_DisplayCart(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet_Display(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        LOGGER.info("Displaying current receipt");
 
-
-        request.getRequestDispatcher("/WEB-INF/views/cart/cartView.jsp").forward(request, response);
-    }
-
-    protected void doGet_Remove(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Retrieve receipt id from session
         HttpSession session = request.getSession();
+        int receiptId = (int) session.getAttribute("receiptId");
 
+        // Retrieve all items for current receipt from database
+        List<Item> receipt = receiptDao.getAllItemsForReceipt(receiptId);
+        session.setAttribute("receipt", receipt);
 
-
-        List<Item> cart = (List<Item>) session.getAttribute("cart");
-        int index = isExisting(request.getParameter("id"), cart);
-
-        cart.remove(index);
-
-        receiptDao.deleteItem(index);
-        session.setAttribute("cart", cart);
-        response.sendRedirect("cart");
+        // Go to receipt view page
+        request.getRequestDispatcher("/WEB-INF/views/receipt/receiptView.jsp").forward(request, response);
     }
 
     protected void doGet_Buy(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession();
-        int productId = Integer.parseInt(request.getParameter("id"));
-        Product productToBuy = productDao.selectProduct(productId);
+        LOGGER.info("Processing <buy> action");
 
+        // Get session
+        HttpSession session = request.getSession();
+
+        // Check if given session already contains open receipt
+        // Otherwise create new one
         if (session.getAttribute("receiptId") == null) {
-            System.out.println("receipt wasn't created yet, creating it....");
             int receiptId = receiptDao.createReceipt(666);
             session.setAttribute("receiptId", receiptId);
         }
 
-        System.out.println("receipt exists, adding items to receipt ....");
+        // Get product which need to be added into receipt
+        int productId = Integer.parseInt(request.getParameter("id"));
+        Product productToBuy = productDao.selectProduct(productId);
 
-        // Add item to receipt
-        int receiptId = (Integer) session.getAttribute("receiptId");
-        receiptDao.addItemToReceipt(receiptId, new Item(productToBuy, 1));
+        // Set receiptId in variable
+        int receiptId = (int) session.getAttribute("receiptId");
 
-        // Receive all items for given receiptId from database
-        List<Item> receipt = receiptDao.getAllItemsForReceipt(receiptId);
-        session.setAttribute("cart", receipt);
+        // Check if item with such product already added in receipt
+        Item item = receiptDao.getItemByProduct(receiptId, productToBuy.getId());
+        if (item != null) {
+            LOGGER.info("Item with such product already exist. Updating quantity of products");
 
-        response.sendRedirect("/cart");
+            // Update Item Quantity in DB
+            receiptDao.updateItemQuantity(item.getId(), item.getQuantity() + 1);
+        } else {
+            LOGGER.info("Item with such product doesn't. Adding new item in receipt");
+
+            // Add item to receipt
+            receiptDao.addItemToReceipt(receiptId, new Item(productToBuy, 1));
+        }
+
+        // Display updated receipt page
+        response.sendRedirect("/receipt");
     }
 
-    private int isExisting(String id, List<Item> cart) {
-        for (int i = 0; i < cart.size(); i++) {
-            // if (cart.get(i).getProduct().getId().equalsIgnoreCase(id)) {
-            return i;
-            //  }
-        }
-        return -1;
+    protected void doGet_Remove(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        LOGGER.info("Removing item from receipt");
+
+        // Retrieving item id to be deleted from receipt
+        int itemToBeDeletedFromReceipt = Integer.parseInt(request.getParameter("id"));
+
+        // Delete item from db
+        receiptDao.deleteItem(itemToBeDeletedFromReceipt);
+
+        // Display updated receipt page
+        response.sendRedirect("/receipt");
+    }
+
+    protected void doGet_Apply(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        LOGGER.info("Updating quantity of element");
+
+        // Retrieving item id to be updated from receipt
+        int itemToBeUpdated = Integer.parseInt(request.getParameter("id"));
+
+        // Retrieving new number of items
+        int newNumberOfItems = Integer.parseInt(request.getParameter("quantity"));
+
+        // Update Item Quantity in DB
+        receiptDao.updateItemQuantity(itemToBeUpdated, newNumberOfItems);
+
+        // Display updated receipt page
+        response.sendRedirect("/receipt");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        LOGGER.info("Processing post request");
 
-        System.out.println("HEY!!!!!!!!");
+        // Get receipt ID, which will be completed
         HttpSession session = request.getSession();
-        receiptDao.closeReceipt((Integer) session.getAttribute("receiptId"));
+        int receiptToBeCompleted = (Integer) session.getAttribute("receiptId");
 
-        session.setAttribute("cart", null);
+        // Change status in Database from "Created" to "Completed"
+        receiptDao.setReceiptStatus(receiptToBeCompleted, "Completed");
+
+        // Nullify current receipt in session
+        session.setAttribute("receipt", null);
         session.setAttribute("receiptId", null);
+
+        // Get back to catalog page
         response.sendRedirect("/catalog");
     }
 
