@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 public class MysqlUserDaoImpl implements UserDao{
     private static final Logger LOGGER = Logger.getLogger(MysqlUserDaoImpl.class);
-    private static final String SELECT_USER_BY_ID = "SELECT username, password, role FROM user WHERE username = ?" +
+    private static final String SELECT_USER_BY_ID = "SELECT username, password, role FROM users WHERE username = ?" +
             "AND password = ?";
 
     // Find a User by userName

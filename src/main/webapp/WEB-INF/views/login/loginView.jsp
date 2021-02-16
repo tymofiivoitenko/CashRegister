@@ -22,6 +22,7 @@
 <form name="loginForm" class="form-horizontal" onsubmit="required()" action="${pageContext.request.contextPath}/login"
       method="POST">
     <input type="hidden" name="redirectId" value="${param.redirectId}"/>
+
     <div class="form-group">
         <label class="control-label col-sm-5">User Name:</label>
         <div class="col-sm-3">
@@ -29,6 +30,7 @@
                    value="${user.userName}">
         </div>
     </div>
+
     <div class="form-group">
         <label class="control-label col-sm-5">Password:</label>
         <div class="col-sm-3">
@@ -36,11 +38,13 @@
                    value="${user.password}">
         </div>
     </div>
+
     <div class="form-group">
         <div class="col-sm-offset-5 col-sm-3">
             <p style="color: red">${errorMessage}</p>
         </div>
     </div>
+
     <div class="form-group">
         <div class="col-sm-offset-5 col-sm-10">
             <button type="submit" class="btn btn-default">Login</button>

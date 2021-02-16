@@ -35,8 +35,7 @@ public class ReceiptServlet extends HttpServlet {
         receiptDao = new MysqlReceiptDaoImpl();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOGGER.info("Processing get request");
 
         String action = request.getParameter("action");
@@ -156,7 +155,7 @@ public class ReceiptServlet extends HttpServlet {
         int receiptToBeCompleted = (Integer) session.getAttribute("receiptId");
 
         // Change status in Database from "Created" to "Completed"
-        receiptDao.setReceiptStatus(receiptToBeCompleted, "Completed");
+        receiptDao.setReceiptStatus(receiptToBeCompleted, "COMPLETED");
 
         // Nullify current receipt in session
         session.setAttribute("receipt", null);

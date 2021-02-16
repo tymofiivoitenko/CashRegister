@@ -27,15 +27,15 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOGGER.info("Processing get request");
 
-        List<Product> products = productDao.selectAllProducts();
+        List<Product> products = productDao.findAll();
 
         request.setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/views/products/productList.jsp").include(request, response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        LOGGER.info("Processing post request");
-    }
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+//        LOGGER.info("Processing post request");
+//    }
 
 }
 

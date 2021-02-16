@@ -7,7 +7,7 @@ public interface ProductDao {
 
     void insertProduct(Product product);
 
-    List<Product> selectAllProducts();
+    List<Product> findAll();
 
     Product selectProduct(int id);
 

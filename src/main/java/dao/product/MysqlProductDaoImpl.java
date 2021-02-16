@@ -19,34 +19,27 @@ import java.util.List;
 public class MysqlProductDaoImpl implements ProductDao {
     private static final Logger LOGGER = Logger.getLogger(MysqlProductDaoImpl.class);
 
-    private static final String SELECT_PRODUCT_BY_ID = "SELECT * FROM Product WHERE id =?;";
+    private static final String SELECT_PRODUCT_BY_ID = "SELECT * FROM products WHERE id =?;";
     private static final String INSERT_PICTURE = "INSERT INTO product_pictures VALUES(?, ?);";
-    private static final String SELECT_ALL_PRODUCTS = "" +
-            "SELECT product.id, product.name, product.price, product.quantity, product_unit.symbol \n" +
-            "FROM Product \n" +
-            "INNER JOIN product_unit \n" +
-            "    ON product_unit.id = product.unit;";
+    private static final String SELECT_ALL_PRODUCTS = "SELECT products.id, products.name, products.price, " +
+            "products.quantity, product_units.symbol " +
+            "FROM products " +
+            "INNER JOIN product_units " +
+            "    ON product_units.id = products.unit;";
 
-    private static final String UPDATE_PRODUCT_SQL = "Update Product \n" +
-            "   SET name= ?,\n" +
-            "   price = ?, \n" +
-            "   quantity = ?,\n" +
-            "   unit = (\n" +
-            "       SELECT id\n" +
-            "         FROM product_unit\n" +
-            "        WHERE symbol = ?)\n" +
-            "where id = ?;";
+    private static final String UPDATE_PRODUCT_SQL = "Update products SET name= ?, price = ?, quantity = ?, unit = (" +
+            "(SELECT id " +
+            "FROM product_units " +
+            "WHERE symbol = ?) " +
+            "WHERE id = ?;";
 
-    private static final String INSERT_PRODUCT_SQL = "INSERT INTO Product \n" +
-            "   SET name = ?,\n" +
-            "   price = ?,\n" +
-            "   quantity = ?,\n" +
-            "   unit = (\n" +
-            "       SELECT id\n" +
-            "         FROM product_unit\n" +
-            "        WHERE symbol = ?);";
+    private static final String INSERT_PRODUCT_SQL = "INSERT INTO products SET name = ?, price = ?, quantity = ?, " +
+            "unit = (" +
+            "  SELECT id " +
+            "  FROM product_units " +
+            "  WHERE symbol = ?);";
 
-    private static final String DELETE_PRODUCT_SQL = "DELETE FROM Product WHERE id = ?;";
+    private static final String DELETE_PRODUCT_SQL = "DELETE FROM products WHERE id = ?;";
 
     public MysqlProductDaoImpl() {
     }
@@ -70,7 +63,7 @@ public class MysqlProductDaoImpl implements ProductDao {
         }
     }
 
-    public List<Product> selectAllProducts() {
+    public List<Product> findAll() {
         LOGGER.info("Select all products");
 
         // using try-with-resources to avoid closing resources (boiler plate code)

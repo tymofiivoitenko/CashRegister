@@ -17,9 +17,7 @@
 </head>
 
 <body>
-
 <jsp:include page="/WEB-INF/views/_navbar.jsp"></jsp:include>
-
 
 <div class="container">
 
@@ -30,8 +28,8 @@
     <div class="container text-left">
         <a type="button" class="btn btn-success" id="addProductBtn">Add New Product</a>
     </div>
-    <br>
 
+    <br>
     <!-- Table with all products from database-->
     <table cellpadding="3" cellspacing="2" border="2" class="text-center table table-striped table-hover">
         <tr class="text-center">

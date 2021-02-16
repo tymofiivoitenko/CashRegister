@@ -17,7 +17,7 @@
         <ul class="nav navbar-nav">
             <li><a href="${pageContext.request.contextPath}/admin">Admin</a></li>
             <li><a href="${pageContext.request.contextPath}/catalog">Catalog</a></li>
-            <li><a href="${pageContext.request.contextPath}/receipts">Receipts</a></li>
+            <li><a href="${pageContext.request.contextPath}/all-receipts">Receipts</a></li>
             <li><a href="${pageContext.request.contextPath}/reports">Reports</a></li>
             <li><a href="${pageContext.request.contextPath}/products">Products</a></li>
         </ul>
