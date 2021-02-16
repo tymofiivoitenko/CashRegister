@@ -1,8 +1,8 @@
 package dao.user;
 
-import bean.UserAccount;
+import model.User;
 
 public interface UserDao {
     // Find a User by userName
-    UserAccount findUser(String userName, String password);
+    User findUser(String userName, String password);
 }

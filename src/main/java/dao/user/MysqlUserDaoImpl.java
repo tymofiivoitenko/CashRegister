@@ -1,6 +1,6 @@
 package dao.user;
 
-import bean.UserAccount;
+import model.User;
 import connection.DBManager;
 import org.apache.log4j.Logger;
 
@@ -16,7 +16,7 @@ public class MysqlUserDaoImpl implements UserDao{
             "AND password = ?";
 
     // Find a User by userName
-    public UserAccount findUser(String userName, String password) {
+    public User findUser(String userName, String password) {
         LOGGER.info("Find user by username: <" + userName + "> and password");
         
         // try-with-resource statement will auto close the connection.
@@ -31,7 +31,7 @@ public class MysqlUserDaoImpl implements UserDao{
             // Process the ResultSet object.
             while (rs.next()) {
                 String role = rs.getString("role");
-                return new UserAccount(userName, password, role);
+                return new User(userName, password, role);
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());

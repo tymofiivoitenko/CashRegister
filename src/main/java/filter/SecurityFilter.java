@@ -1,6 +1,6 @@
 package filter;
 
-import bean.UserAccount;
+import model.User;
 import org.apache.log4j.Logger;
 import request.UserRoleRequestWrapper;
 import utils.AppUtils;
@@ -34,7 +34,7 @@ public class SecurityFilter implements Filter {
 
         // User information stored in the Session.
         // (After successful login).
-        UserAccount loginedUser = (UserAccount) request.getSession().getAttribute("loginedUser");
+        User loginedUser = (User) request.getSession().getAttribute("loginedUser");
 
         if (servletPath.equals("/login")) {
             try {

@@ -1,6 +1,6 @@
 package servlets.login;
 
-import bean.UserAccount;
+import model.User;
 import dao.user.MysqlUserDaoImpl;
 import dao.user.UserDao;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -48,7 +48,7 @@ public class LoginServlet extends HttpServlet {
 
         LOGGER.info("Checking database for username: " + userName);
         // Lookup for user in database
-        UserAccount userAccount = userDao.findUser(userName, password);
+        User userAccount = userDao.findUser(userName, password);
 
         LOGGER.info("Found user: " + userAccount + ". Checking if user is null....");
         // Validate user by it username and password

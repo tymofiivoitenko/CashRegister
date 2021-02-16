@@ -14,7 +14,6 @@ public class Product {
     public Product(String name, double price, String unit) {
         this.name = name;
         this.price = price;
-        this.quantity = quantity;
         this.unit = unit;
     }
 
