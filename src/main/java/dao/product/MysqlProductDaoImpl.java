@@ -20,7 +20,13 @@ public class MysqlProductDaoImpl implements ProductDao {
     private static final Logger LOGGER = Logger.getLogger(MysqlProductDaoImpl.class);
 
     private static final String SELECT_PRODUCT_BY_ID = "SELECT * FROM products WHERE id =?;";
-    private static final String INSERT_PICTURE = "INSERT INTO product_pictures VALUES(?, ?);";
+    private static final String SELECT_LIMITED_NUMBER_OF_PRODUCTS = "SELECT products.id, products.name, products.price, " +
+            "products.quantity, product_units.symbol " +
+            "FROM products " +
+            "INNER JOIN product_units " +
+            "    ON product_units.id = products.unit " +
+            "ORDER BY id limit ? OFFSET ?;";
+    private static final String SELECT_PRODUCTS_NUMBER = "SELECT COUNT(*) FROM products;";
     private static final String SELECT_ALL_PRODUCTS = "SELECT products.id, products.name, products.price, " +
             "products.quantity, product_units.symbol " +
             "FROM products " +
@@ -28,9 +34,7 @@ public class MysqlProductDaoImpl implements ProductDao {
             "    ON product_units.id = products.unit;";
 
     private static final String UPDATE_PRODUCT_SQL = "Update products SET name= ?, price = ?, quantity = ?, unit = (" +
-            "(SELECT id " +
-            "FROM product_units " +
-            "WHERE symbol = ?) " +
+            "SELECT id FROM product_units WHERE symbol = ?) " +
             "WHERE id = ?;";
 
     private static final String INSERT_PRODUCT_SQL = "INSERT INTO products SET name = ?, price = ?, quantity = ?, " +
@@ -38,7 +42,7 @@ public class MysqlProductDaoImpl implements ProductDao {
             "  SELECT id " +
             "  FROM product_units " +
             "  WHERE symbol = ?);";
-
+    private static final String INSERT_PICTURE = "INSERT INTO product_pictures VALUES(?, ?);";
     private static final String DELETE_PRODUCT_SQL = "DELETE FROM products WHERE id = ?;";
 
     public MysqlProductDaoImpl() {
@@ -64,10 +68,11 @@ public class MysqlProductDaoImpl implements ProductDao {
     }
 
     public List<Product> findAll() {
-        LOGGER.info("Select all products");
+        LOGGER.info("Select all fields for all products");
 
         // using try-with-resources to avoid closing resources (boiler plate code)
         List<Product> products = new ArrayList<>();
+
         // Step 1: Establishing a Connection
         try (Connection connection = DBManager.getInstance().getConnection()) {
 
@@ -78,19 +83,13 @@ public class MysqlProductDaoImpl implements ProductDao {
             ResultSet rs = preparedStatement.executeQuery();
 
             // Step 4: Process the ResultSet object.
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                double price = rs.getDouble("price");
-                int quantityInStock = rs.getInt("quantity");
-                String measurementType = rs.getString("symbol");
+            products = retrieveProductsFromResultSet(rs);
 
-                products.add(new Product(id, name, price, quantityInStock, measurementType));
-            }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
+
         return products;
     }
 
@@ -158,6 +157,26 @@ public class MysqlProductDaoImpl implements ProductDao {
         return false;
     }
 
+    @Override
+    public int getProductsNumber() {
+        LOGGER.info("Counting total number of products ...");
+        int productsNumber = -1;
+
+        try (Connection connection = DBManager.getInstance().getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_PRODUCTS_NUMBER);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                productsNumber = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return productsNumber;
+    }
+
     public boolean insertImage() {
         LOGGER.info("Insert image");
 
@@ -172,9 +191,49 @@ public class MysqlProductDaoImpl implements ProductDao {
             LOGGER.error(e.getMessage());
             e.printStackTrace();
         } catch (FileNotFoundException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
 
         return false;
     }
+
+    @Override
+    public List<Product> findProducts(int page, int pageSize) {
+        List<Product> products = new ArrayList<>();
+
+        try (Connection connection = DBManager.getInstance().getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_LIMITED_NUMBER_OF_PRODUCTS);
+
+            statement.setInt(1, pageSize);
+            statement.setInt(2, pageSize * (page - 1));
+            ResultSet rs = statement.executeQuery();
+
+            products = retrieveProductsFromResultSet(rs);
+        } catch (SQLException ex) {
+            LOGGER.error(ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        return products;
+    }
+
+    List<Product> retrieveProductsFromResultSet(ResultSet rs) throws SQLException {
+        List<Product> products = new ArrayList<>();
+
+        // Process the ResultSet object.
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String name = rs.getString("name");
+            double price = rs.getDouble("price");
+            int quantity = rs.getInt("quantity");
+            String measurementType = rs.getString("symbol");
+
+            products.add(new Product(id, name, price, quantity, measurementType));
+        }
+
+        return products;
+    }
+
+
 }

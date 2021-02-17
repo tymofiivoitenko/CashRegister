@@ -5,9 +5,11 @@
   Time: 19:57
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-         pageEncoding="ISO-8859-1" isELIgnored="false" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="ISO-8859-1" isELIgnored="false" %>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="util" tagdir="/WEB-INF/tags" %>
+
 <html>
 <head>
     <title>Products</title>
@@ -50,16 +52,36 @@
                 <td><a href="#editProduct_modal" data-toggle="modal"
                        data-product-id="${product.id}"
                        data-product-name="${product.name}"
-                       data-product-price="${product.price}"
+                       data-product-price="$${product.price}"
                        data-product-quantity="${product.quantity}"
                        data-product-unit="${product.unit}">Edit</a> &nbsp;&nbsp;&nbsp;&nbsp;
-
-                    <a href=${pageContext.request.getRequestURI()}/delete?id=<c:out
-                            value='${product.id}'/>>Delete</a>
+                    <a href=${pageContext.request.getRequestURI()}/delete?id=<c:out value='${product.id}'/>>Delete</a>
                 </td>
             </tr>
         </c:forEach>
     </table>
+
+
+    <ul class="pager">
+        <c:choose>
+            <c:when test="${page == 1}">
+                <li class="previous"><a>Previous</a></li>
+            </c:when>
+            <c:otherwise>
+                <li class="previous"><a href="${path}?pageSize=${pageSize}&page=${page-1}">Previous</a></li>
+            </c:otherwise>
+        </c:choose>
+
+        <c:choose>
+            <c:when test="${page == maxPage}">
+                <li class="next"><a>Next</a></li>
+            </c:when>
+            <c:otherwise>
+                <li class="next"><a href="${path}?pageSize=${pageSize}&page=${page+1}">Next</a></li>
+            </c:otherwise>
+        </c:choose>
+    </ul>
+
 
     <!-- Add products Modal -->
     <div class=" modal fade" id="addProductModal" role="dialog">

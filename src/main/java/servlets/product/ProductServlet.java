@@ -14,12 +14,16 @@ import java.util.List;
 
 @WebServlet("/products")
 public class ProductServlet extends HttpServlet {
+    private static final int defaultFirstPageNumber = 1;
+    private static final int defaultNumberOfProductsOnPage = 3;
+
     private MysqlProductDaoImpl productDao;
     private static final Logger LOGGER = Logger.getLogger(ProductServlet.class);
 
     public void init() {
         productDao = new MysqlProductDaoImpl();
     }
+
     public ProductServlet() {
         super();
     }
@@ -27,15 +31,36 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOGGER.info("Processing get request");
 
-        List<Product> products = productDao.findAll();
+        // Getting parameters
+        String paramPage = request.getParameter("page");
+        String paramPageSize = request.getParameter("pageSize");
 
+        // Set default parameters, if that was first call
+        if (paramPage == null || paramPageSize == null) {
+            paramPage = String.valueOf(defaultFirstPageNumber);
+            paramPageSize = String.valueOf(defaultNumberOfProductsOnPage);
+        }
+
+        // Cast parameters to int
+        int page = Integer.parseInt(paramPage);
+        int pageSize = Integer.parseInt(paramPageSize);
+
+        // Get limited number of products (pageSize) for given page
+        List<Product> products = productDao.findProducts(page, pageSize);
+
+        // Calculating max number of pages
+        int productsNumber = productDao.getProductsNumber();
+        int maxPage = (int) Math.ceil((double) productsNumber / pageSize);
+
+        // Setting attributes
+        request.setAttribute("page", page);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("maxPage", maxPage);
         request.setAttribute("products", products);
-        request.getRequestDispatcher("/WEB-INF/views/products/productList.jsp").include(request, response);
+
+        // Forward to productList
+        request.getRequestDispatcher("/WEB-INF/views/products/productList.jsp").forward(request, response);
+
     }
-
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-//        LOGGER.info("Processing post request");
-//    }
-
 }
 

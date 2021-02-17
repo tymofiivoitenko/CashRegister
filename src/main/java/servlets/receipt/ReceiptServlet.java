@@ -4,7 +4,7 @@ import dao.product.MysqlProductDaoImpl;
 import dao.product.ProductDao;
 import dao.receipt.MysqlReceiptDaoImpl;
 import dao.receipt.ReceiptDao;
-import model.Item;
+import model.ReceiptItem;
 import model.Product;
 import org.apache.log4j.Logger;
 
@@ -73,7 +73,7 @@ public class ReceiptServlet extends HttpServlet {
         int receiptId = (int) session.getAttribute("receiptId");
 
         // Retrieve all items for current receipt from database
-        List<Item> receipt = receiptDao.getAllItemsForReceipt(receiptId);
+        List<ReceiptItem> receipt = receiptDao.getAllItemsForReceipt(receiptId);
         session.setAttribute("receipt", receipt);
 
         // Go to receipt view page
@@ -89,7 +89,7 @@ public class ReceiptServlet extends HttpServlet {
         // Check if given session already contains open receipt
         // Otherwise create new one
         if (session.getAttribute("receiptId") == null) {
-            int receiptId = receiptDao.createReceipt(666);
+            int receiptId = receiptDao.createReceipt(4);
             session.setAttribute("receiptId", receiptId);
         }
 
@@ -101,17 +101,17 @@ public class ReceiptServlet extends HttpServlet {
         int receiptId = (int) session.getAttribute("receiptId");
 
         // Check if item with such product already added in receipt
-        Item item = receiptDao.getItemByProduct(receiptId, productToBuy.getId());
-        if (item != null) {
+        ReceiptItem receiptItem = receiptDao.getItemByProduct(receiptId, productToBuy.getId());
+        if (receiptItem != null) {
             LOGGER.info("Item with such product already exist. Updating quantity of products");
 
             // Update Item Quantity in DB
-            receiptDao.updateItemQuantity(item.getId(), item.getQuantity() + 1);
+            receiptDao.updateItemQuantity(receiptItem.getId(), receiptItem.getQuantity() + 1);
         } else {
             LOGGER.info("Item with such product doesn't. Adding new item in receipt");
 
             // Add item to receipt
-            receiptDao.addItemToReceipt(receiptId, new Item(productToBuy, 1));
+            receiptDao.addItemToReceipt(receiptId, new ReceiptItem(productToBuy, 1));
         }
 
         // Display updated receipt page
@@ -152,10 +152,11 @@ public class ReceiptServlet extends HttpServlet {
 
         // Get receipt ID, which will be completed
         HttpSession session = request.getSession();
-        int receiptToBeCompleted = (Integer) session.getAttribute("receiptId");
+        int receiptToBeClosed = (Integer) session.getAttribute("receiptId");
 
-        // Change status in Database from "Created" to "Completed"
-        receiptDao.setReceiptStatus(receiptToBeCompleted, "COMPLETED");
+        // Change status in Database from "Created" to "Closed"
+        //receiptDao.setReceiptStatus(receiptToBeCompleted, "COMPLETED");
+        receiptDao.closeReceipt(receiptToBeClosed);
 
         // Nullify current receipt in session
         session.setAttribute("receipt", null);

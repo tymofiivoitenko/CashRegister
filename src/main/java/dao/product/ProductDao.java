@@ -1,6 +1,7 @@
 package dao.product;
 
 import model.Product;
+
 import java.util.List;
 
 public interface ProductDao {
@@ -14,6 +15,10 @@ public interface ProductDao {
     boolean updateProduct(Product product);
 
     boolean deleteProduct(int id);
+
+    int getProductsNumber();
+
+    List<Product> findProducts(int page, int pageSize);
 
     boolean insertImage();
 }

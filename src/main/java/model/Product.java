@@ -11,6 +11,9 @@ public class Product {
     private byte[] imageData;
     private String imageFileName;
 
+    public Product() {
+    }
+
     public Product(String name, double price, String unit) {
         this.name = name;
         this.price = price;
