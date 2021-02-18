@@ -34,7 +34,6 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         LOGGER.info("Processing get request");
         RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/WEB-INF/views/login/loginView.jsp");
-
         dispatcher.forward(request, response);
     }
 
@@ -48,11 +47,12 @@ public class LoginServlet extends HttpServlet {
 
         LOGGER.info("Checking database for username: " + userName);
         // Lookup for user in database
-        User userAccount = userDao.findUser(userName, password);
+        User user = userDao.findUser(userName, password);
 
-        LOGGER.info("Found user: " + userAccount + ". Checking if user is null....");
+        LOGGER.info("Found user: " + user + ". Checking if user is null....");
+
         // Validate user by it username and password
-        if (userAccount == null) {
+        if (user == null) {
             LOGGER.info("User is null, send error message ");
 
             String errorMessage = "Invalid username or password";
@@ -64,9 +64,10 @@ public class LoginServlet extends HttpServlet {
         }
 
         // Store user info in Session.
-        request.getSession().setAttribute("loginedUser", userAccount);
+        request.getSession().setAttribute("loginedUser", user);
 
         LOGGER.info("User isn't null, checking if there is need for redirecting user on another page ");
+
         // Redirect user to page, he wanted to access before login
         if (request.getParameter("redirectId") != null && request.getParameter("redirectId") != "") {
 
@@ -80,8 +81,8 @@ public class LoginServlet extends HttpServlet {
         } else {
             LOGGER.info("No need in redirection, go to default HOME page");
             // Default after successful login
-            // redirect to /userInfo page
-            response.sendRedirect(request.getContextPath() + "/userInfo");
+            // redirect to /home page
+            response.sendRedirect(request.getContextPath() + "/");
         }
     }
 }

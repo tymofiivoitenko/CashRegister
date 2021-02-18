@@ -2,28 +2,27 @@ package request;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.util.List;
 import java.security.Principal;
 
 public class UserRoleRequestWrapper extends HttpServletRequestWrapper {
 
     private String user;
-    private List<String> roles;
+    private String realRole;
     private HttpServletRequest realRequest;
 
-    public UserRoleRequestWrapper(String user, List<String> roles, HttpServletRequest request) {
+    public UserRoleRequestWrapper(String user, String role, HttpServletRequest request) {
         super(request);
         this.user = user;
-        this.roles = roles;
+        this.realRole = role;
         this.realRequest = request;
     }
 
     @Override
-    public boolean isUserInRole(String role) {
-        if (roles == null) {
-            return this.realRequest.isUserInRole(role);
+    public boolean isUserInRole(String roleToCheck) {
+        if (realRole == null) {
+            return this.realRequest.isUserInRole(roleToCheck);
         }
-        return roles.contains(role);
+        return realRole.equals(roleToCheck);
     }
 
     @Override

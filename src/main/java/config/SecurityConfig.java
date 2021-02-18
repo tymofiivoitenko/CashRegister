@@ -17,6 +17,7 @@ public class SecurityConfig {
     static {
         // Configure For "EMPLOYEE" Role.
         List<String> urlPatterns = new ArrayList<>();
+
         urlPatterns.add("/userInfo");
         urlPatterns.add("/employeeTask");
 

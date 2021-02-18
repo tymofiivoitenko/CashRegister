@@ -1,15 +1,11 @@
 package model;
 
-import java.util.Arrays;
-
 public class Product {
     private int id;
     private String name;
     private double price;
     private double quantity;
     private String unit;
-    private byte[] imageData;
-    private String imageFileName;
 
     public Product() {
     }
@@ -33,15 +29,6 @@ public class Product {
         this.price = price;
         this.quantity = quantity;
         this.unit = unit;
-    }
-
-    public Product(String name, double price, double quantity, String unit, String imageFileName, byte[] imageData) {
-        this.name = name;
-        this.price = price;
-        this.quantity = quantity;
-        this.unit = unit;
-        this.imageData = imageData;
-        this.imageFileName = imageFileName;
     }
 
     public int getId() {
@@ -84,22 +71,6 @@ public class Product {
         this.unit = unit;
     }
 
-    public byte[] getImageData() {
-        return imageData;
-    }
-
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
-    }
-
-    public String getImageFileName() {
-        return imageFileName;
-    }
-
-    public void setImageFileName(String imageFileName) {
-        this.imageFileName = imageFileName;
-    }
-
     @Override
     public String toString() {
         return "Product{" +
@@ -108,8 +79,6 @@ public class Product {
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", unit='" + unit + '\'' +
-                ", imageData=" + Arrays.toString(imageData) +
-                ", imageFileName='" + imageFileName + '\'' +
                 '}';
     }
 }

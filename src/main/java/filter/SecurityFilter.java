@@ -11,7 +11,6 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 @WebFilter("/*")
 public class SecurityFilter implements Filter {
@@ -56,10 +55,10 @@ public class SecurityFilter implements Filter {
             String userName = loginedUser.getUserName();
 
             // Get user Roles
-            List<String> roles = loginedUser.getRoles();
+            String role = loginedUser.getRole();
 
             // Wrap old request by a new Request with userName and Roles information.
-            wrapRequest = new UserRoleRequestWrapper(userName, roles, request);
+            wrapRequest = new UserRoleRequestWrapper(userName, role, request);
         }
 
         // Pages must be signed in.

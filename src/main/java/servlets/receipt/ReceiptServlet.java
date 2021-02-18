@@ -89,7 +89,7 @@ public class ReceiptServlet extends HttpServlet {
         // Check if given session already contains open receipt
         // Otherwise create new one
         if (session.getAttribute("receiptId") == null) {
-            int receiptId = receiptDao.createReceipt(4);
+            int receiptId = receiptDao.createReceipt(2);
             session.setAttribute("receiptId", receiptId);
         }
 
