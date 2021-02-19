@@ -57,6 +57,7 @@ public class LoginServlet extends HttpServlet {
 
             String errorMessage = "Invalid username or password";
             request.setAttribute("errorMessage", errorMessage);
+
             RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/WEB-INF/views/login/loginView.jsp");
 
             dispatcher.forward(request, response);
@@ -80,8 +81,7 @@ public class LoginServlet extends HttpServlet {
             }
         } else {
             LOGGER.info("No need in redirection, go to default HOME page");
-            // Default after successful login
-            // redirect to /home page
+            //  After successful login redirect to Default /home page
             response.sendRedirect(request.getContextPath() + "/");
         }
     }

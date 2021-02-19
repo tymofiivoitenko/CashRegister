@@ -23,13 +23,27 @@
     </div>
 </div>
 
+
+<div class="form-group col-md-6">
+    <label for="inputCity">City</label>
+    <input type="text" class="form-control" id="inputCity">
+</div>
+<div class="form-group col-md-4">
+    <label for="inputState">State</label>
+    <select id="inputState" class="form-control">
+        <option selected>Choose...</option>
+        <option>...</option>
+    </select>
+</div>
+
 <div class="form-group">
     <label class="col-sm-3 col-form-label">Quantity</label>
     <div class="col-sm-9">
 
         <input type="text" class="form-control" name="productQuantity" placeholder="Enter quantity">
 
-        <select id= "product-unit-select" name="productUnit" class="btn btn-secondary dropdown-toggle">
+
+        <select id="product-unit-select" name="productUnit" class="btn btn-secondary dropdown-toggle">
             <option value="kg">kg</option>
             <option value="L">L</option>
             <option value="piece">piece</option>

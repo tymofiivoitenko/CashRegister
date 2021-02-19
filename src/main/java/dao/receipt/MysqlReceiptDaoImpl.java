@@ -23,6 +23,7 @@ public class MysqlReceiptDaoImpl implements ReceiptDao {
     private static final String UPDATE_RECEIPT_SET_STATUS = "UPDATE receipts SET status = ? WHERE id = ?;";
     private static final String UPDATE_CLOSE_RECEIPT = "UPDATE receipts SET closed_date = NOW(), status = ? WHERE id = ?;";
     private static final String DELETE_ITEM_SQL = "DELETE FROM receipt_items WHERE id = ?;";
+    private static final String SELECT_RECEIPT_NUMBER = "SELECT COUNT(*) FROM receipts;";
     private static final String SELECT_LAST_INSERTED_RECEIPT_ID = "SELECT last_insert_id() as last_id from receipts;";
     private static final String SELECT_ALL_RECEIPTS = "SELECT rs.id, rs.cashbox_id, cbox.vigil_id, users.username, rs.created_date, " +
             "rs.closed_date, SUM(prs.price * ris.quantity) total_price, rs.status " +
@@ -33,6 +34,17 @@ public class MysqlReceiptDaoImpl implements ReceiptDao {
             "INNER JOIN vigils ON cbox.vigil_id = vigils.id " +
             "INNER JOIN users ON vigils.user_id = users.id " +
             "GROUP BY rs.id;";
+
+    private static final String SELECT_LIMITED_NUMBER_OF_RECEIPTS = "SELECT rs.id, rs.cashbox_id, cbox.vigil_id, users.username, rs.created_date, " +
+            "rs.closed_date, SUM(prs.price * ris.quantity) total_price, rs.status " +
+            "FROM receipts rs " +
+            "INNER JOIN receipt_items ris ON rs.id = ris.receipt_id " +
+            "INNER JOIN cashboxes cbox ON rs.cashbox_id = cbox.id " +
+            "INNER JOIN products prs ON ris.product_id = prs.id " +
+            "INNER JOIN vigils ON cbox.vigil_id = vigils.id " +
+            "INNER JOIN users ON vigils.user_id = users.id " +
+            "GROUP BY rs.id " +
+            "ORDER BY id limit ? OFFSET ?;";
 
     private static final String SELECT_ITEM_WITH_GIVEN_PRODUCT_ID = "SELECT products.name, products.price, products.unit, receipt_items.id, receipt_items.quantity " +
             "FROM receipt_items " +
@@ -60,33 +72,7 @@ public class MysqlReceiptDaoImpl implements ReceiptDao {
             ResultSet rs = preparedStatement.executeQuery();
 
             // Step 4: Process the ResultSet object.
-            while (rs.next()) {
-                int receiptId = rs.getInt("id");
-                int vigilId = rs.getInt("vigil_id");
-                int cashBoxId = rs.getInt("cashbox_id");
-                //int status = rs.getInt("status");
-                String userName = rs.getString("userName");
-                LocalDateTime createdDate = null;
-                LocalDateTime closedDate = null;
-
-                if (rs.getTimestamp("created_date") != null) {
-                    createdDate = rs.getTimestamp("created_date").toInstant()
-                            .atZone(ZoneId.of("UTC"))
-                            .toLocalDateTime();
-                }
-                if (rs.getTimestamp("closed_date") != null) {
-                    closedDate = rs.getTimestamp("closed_date").toInstant()
-                            .atZone(ZoneId.of("UTC"))
-                            .toLocalDateTime();
-                }
-
-                Double totalPrice = rs.getDouble("total_price");
-                String status = rs.getString("status");
-
-                Vigil vigil = new Vigil(vigilId, new User(userName));
-                CashBox cashBox = new CashBox(cashBoxId, vigil, "myMachine","ok");
-                receipts.add(new Receipt(receiptId, createdDate, closedDate, cashBox, totalPrice, status));
-            }
+            receipts = retrieveReceiptsFromResultSet(rs);
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
             e.printStackTrace();
@@ -215,6 +201,46 @@ public class MysqlReceiptDaoImpl implements ReceiptDao {
     }
 
     @Override
+    public int getReceiptsNumber() {
+        LOGGER.info("Counting total number of receipts ...");
+        int receiptNumber = -1;
+
+        try (Connection connection = DBManager.getInstance().getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_RECEIPT_NUMBER);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                receiptNumber = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return receiptNumber;
+    }
+
+    @Override
+    public List<Receipt> findReceipts(int page, int pageSize) {
+        List<Receipt> receipts = new ArrayList<>();
+
+        try (Connection connection = DBManager.getInstance().getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_LIMITED_NUMBER_OF_RECEIPTS);
+
+            statement.setInt(1, pageSize);
+            statement.setInt(2, pageSize * (page - 1));
+            ResultSet rs = statement.executeQuery();
+
+            receipts = retrieveReceiptsFromResultSet(rs);
+        } catch (SQLException ex) {
+            LOGGER.error(ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        return receipts;
+    }
+
+    @Override
     public boolean deleteItem(int itemId) {
         LOGGER.info("Delete item: " + itemId);
 
@@ -301,5 +327,43 @@ public class MysqlReceiptDaoImpl implements ReceiptDao {
 
         return receiptItems;
     }
+
+    List<Receipt> retrieveReceiptsFromResultSet(ResultSet rs) throws SQLException {
+        List<Receipt> receipts = new ArrayList<>();
+
+        // Process the ResultSet object.
+        // Step 4: Process the ResultSet object.
+        while (rs.next()) {
+            int receiptId = rs.getInt("id");
+            int vigilId = rs.getInt("vigil_id");
+            int cashBoxId = rs.getInt("cashbox_id");
+            //int status = rs.getInt("status");
+            String userName = rs.getString("userName");
+            LocalDateTime createdDate = null;
+            LocalDateTime closedDate = null;
+
+            if (rs.getTimestamp("created_date") != null) {
+                createdDate = rs.getTimestamp("created_date").toInstant()
+                        .atZone(ZoneId.of("UTC"))
+                        .toLocalDateTime();
+            }
+            if (rs.getTimestamp("closed_date") != null) {
+                closedDate = rs.getTimestamp("closed_date").toInstant()
+                        .atZone(ZoneId.of("UTC"))
+                        .toLocalDateTime();
+            }
+
+            Double totalPrice = rs.getDouble("total_price");
+            String status = rs.getString("status");
+
+            Vigil vigil = new Vigil(vigilId, new User(userName));
+            CashBox cashBox = new CashBox(cashBoxId, vigil, "myMachine", "ok");
+
+            receipts.add(new Receipt(receiptId, createdDate, closedDate, cashBox, totalPrice, status));
+        }
+
+        return receipts;
+    }
+
 
 }

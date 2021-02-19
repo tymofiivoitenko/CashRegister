@@ -1,6 +1,7 @@
 package dao.vigil;
 
 import connection.DBManager;
+import model.User;
 import model.Vigil;
 import org.apache.log4j.Logger;
 
@@ -62,7 +63,7 @@ public class MysqlVigilDaoImpl implements VigilDao {
                 String userName = rs.getString("username");
                 String status = rs.getString("status");
 
-                return new Vigil(id, startDate, status);
+                return new Vigil(id, new User(userName), startDate, status);
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());

@@ -29,6 +29,13 @@ public class Vigil {
         this.status = status;
     }
 
+    public Vigil(int id, User user, Date startDate, String status) {
+        this.id = id;
+        this.user = user;
+        this.startDate = startDate;
+        this.status = status;
+    }
+
     public int getId() {
         return id;
     }
@@ -72,8 +79,9 @@ public class Vigil {
     public String toString() {
         return "Vigil{" +
                 "id=" + id +
-                ", cashier=" + user +
+                ", user=" + user +
                 ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 ", status='" + status + '\'' +
                 '}';
     }

@@ -21,22 +21,18 @@
 <jsp:include page="/WEB-INF/views/_navbar.jsp"></jsp:include>
 
 <div class="container">
-    <h3 class="text-center">ALL! Receipt for user - </h3>
+
+    <h3 class="text-center">All receipts available for - ${loginedUser.userName}</h3>
     <hr>
 
-    <div class="container text-right">
-        <c:choose>
-            <c:when test="${kk == 123}">
-                <button type="submit" class="btn btn-success">Start vigil</button>
-            </c:when>
+    <br>
 
-            <c:otherwise>
-                <button type="submit" class="btn btn-danger">Stop vigil</button>
-            </c:otherwise>
-        </c:choose>
+    <div class="button-group text-right">
+        <form action="${pageContext.request.contextPath}/receipt" method="post">
+            <button type="submit" class="btn btn-success">Add new receipt</button>
+        </form>
     </div>
 
-    <br>
     <form class="form-horizontal" method="POST">
         <table cellpadding="3" cellspacing="2" border="2" class="text-center table table-striped table-hover">
             <tr class="text-center">
@@ -65,6 +61,28 @@
             </c:forEach>
         </table>
     </form>
+
+    <ul class="pager">
+        <c:choose>
+            <c:when test="${page == 1}">
+                <li class="previous"><a>Previous</a></li>
+            </c:when>
+            <c:otherwise>
+                <li class="previous"><a href="${path}?pageSize=${pageSize}&page=${page-1}">Previous</a></li>
+            </c:otherwise>
+        </c:choose>
+
+        <c:choose>
+            <c:when test="${page == maxPage}">
+                <li class="next"><a>Next</a></li>
+            </c:when>
+            <c:otherwise>
+                <li class="next"><a href="${path}?pageSize=${pageSize}&page=${page+1}">Next</a></li>
+            </c:otherwise>
+        </c:choose>
+    </ul>
+
+
 </div>
 
 </body>

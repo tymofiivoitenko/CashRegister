@@ -49,6 +49,8 @@
             </tr>
         </c:forEach>
     </table>
+
+    <jsp:include page="/WEB-INF/views/products/_productsPaginationGroup.jsp"></jsp:include>
 </div>
 
 </body>

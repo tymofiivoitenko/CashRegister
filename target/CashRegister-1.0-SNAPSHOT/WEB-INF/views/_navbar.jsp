@@ -17,7 +17,6 @@
         <ul class="nav navbar-nav">
             <li><a href="${pageContext.request.contextPath}/admin">Admin</a></li>
             <li><a href="${pageContext.request.contextPath}/all-receipts">Receipts</a></li>
-            <li><a href="${pageContext.request.contextPath}/catalog">Catalog</a></li>
             <li><a href="${pageContext.request.contextPath}/reports">Reports</a></li>
             <li><a href="${pageContext.request.contextPath}/products">Products</a></li>
         </ul>
@@ -25,7 +24,6 @@
         <ul class="nav navbar-nav navbar-right">
 
             <span style="color:red">[ ${loginedUser.userName} ]</span>
-
 
             <!-- If user hasn't pass authentication yet, then show Login button  -->
             <!-- Otherwise, show Logout button -->
@@ -41,7 +39,7 @@
                             <form class="navbar-form navbar-left" action="${pageContext.request.contextPath}/vigil"
                                   method="post">
                                 <c:choose>
-                                    <c:when test="${33 == 333}">
+                                    <c:when test="${empty vigil}">
                                         <button type="submit" class="btn btn-success"><span
                                                 class="glyphicon glyphicon-play"></span>
                                             Start Vigil

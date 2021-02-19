@@ -2,13 +2,9 @@ package servlets.receipt;
 
 import dao.receipt.MysqlReceiptDaoImpl;
 import dao.receipt.ReceiptDao;
-import dao.vigil.MysqlVigilDaoImpl;
-import dao.vigil.VigilDao;
 import model.Receipt;
-import model.Vigil;
 import org.apache.log4j.Logger;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,9 +18,10 @@ import java.util.List;
 public class AllReceiptsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(AllReceiptsServlet.class);
+    private static final int defaultFirstPageNumber = 1;
+    private static final int defaultNumberOfReceiptsOnPage = 5;
 
     private ReceiptDao receiptDao;
-    private VigilDao vigilDao;
 
     public AllReceiptsServlet() {
         super();
@@ -32,36 +29,40 @@ public class AllReceiptsServlet extends HttpServlet {
 
     public void init() {
         receiptDao = new MysqlReceiptDaoImpl();
-        vigilDao = new MysqlVigilDaoImpl();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOGGER.info("Processing get request");
 
-        // Get all receipts from database
-        List<Receipt> receipts = receiptDao.findAll();
+        // Getting parameters
+        String paramPage = request.getParameter("page");
+        String paramPageSize = request.getParameter("pageSize");
 
-        Vigil cashierVigil = (Vigil) request.getAttribute("vigil");
-        LOGGER.info("Current User Vigil: " + cashierVigil);
+        // Set default parameters, if that was first call
+        if (paramPage == null || paramPageSize == null) {
+            paramPage = String.valueOf(defaultFirstPageNumber);
+            paramPageSize = String.valueOf(defaultNumberOfReceiptsOnPage);
+        }
 
-        // Set attributes
+        // Cast parameters to int
+        int page = Integer.parseInt(paramPage);
+        int pageSize = Integer.parseInt(paramPageSize);
+
+        // Get limited number of products (pageSize) for given page
+        List<Receipt> receipts = receiptDao.findReceipts(page, pageSize);
+
+        // Calculating max number of pages
+        int productsNumber = receiptDao.getReceiptsNumber();
+        int maxPage = (int) Math.ceil((double) productsNumber / pageSize);
+
+        // Setting attributes
+        request.setAttribute("page", page);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("maxPage", maxPage);
         request.setAttribute("receipts", receipts);
-        request.setAttribute("cashierVigil", cashierVigil);
 
-        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/WEB-INF/views/receipt/allReceiptView.jsp");
-        dispatcher.forward(request, response);
-    }
+        request.getRequestDispatcher("/WEB-INF/views/receipt/allReceiptView.jsp").forward(request, response);
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        LOGGER.info("Processing post request");
-
-        // Start new vigil
-        vigilDao.startVigil(777);
-
-        // Set cashier vigil in attribute
-        request.setAttribute("cashierVigil", vigilDao.getActiveVigil(777));
-
-        request.getRequestDispatcher("/WEB-INF/views/receipt/allReceiptView.jsp").include(request, response);
     }
 
 }

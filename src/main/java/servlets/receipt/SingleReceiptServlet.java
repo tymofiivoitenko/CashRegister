@@ -19,14 +19,14 @@ import java.util.List;
 
 
 @WebServlet("/receipt")
-public class ReceiptServlet extends HttpServlet {
+public class SingleReceiptServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(ReceiptServlet.class);
+    private static final Logger LOGGER = Logger.getLogger(SingleReceiptServlet.class);
 
     private ProductDao productDao;
     private ReceiptDao receiptDao;
 
-    public ReceiptServlet() {
+    public SingleReceiptServlet() {
         super();
     }
 
@@ -77,7 +77,7 @@ public class ReceiptServlet extends HttpServlet {
         session.setAttribute("receipt", receipt);
 
         // Go to receipt view page
-        request.getRequestDispatcher("/WEB-INF/views/receipt/receiptView.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/receipt/singleReceiptView.jsp").forward(request, response);
     }
 
     protected void doGet_Buy(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -85,13 +85,6 @@ public class ReceiptServlet extends HttpServlet {
 
         // Get session
         HttpSession session = request.getSession();
-
-        // Check if given session already contains open receipt
-        // Otherwise create new one
-        if (session.getAttribute("receiptId") == null) {
-            int receiptId = receiptDao.createReceipt(2);
-            session.setAttribute("receiptId", receiptId);
-        }
 
         // Get product which need to be added into receipt
         int productId = Integer.parseInt(request.getParameter("id"));
@@ -147,12 +140,15 @@ public class ReceiptServlet extends HttpServlet {
         response.sendRedirect("/receipt");
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         LOGGER.info("Processing post request");
 
         // Get receipt ID, which will be completed
         HttpSession session = request.getSession();
-        int receiptToBeClosed = (Integer) session.getAttribute("receiptId");
+        int receiptToBeClosed = -1;
+        if (session.getAttribute("receiptId") != null) {
+            receiptToBeClosed = (Integer) session.getAttribute("receiptId");
+        }
 
         // Change status in Database from "Created" to "Closed"
         //receiptDao.setReceiptStatus(receiptToBeCompleted, "COMPLETED");
@@ -161,6 +157,26 @@ public class ReceiptServlet extends HttpServlet {
         // Nullify current receipt in session
         session.setAttribute("receipt", null);
         session.setAttribute("receiptId", null);
+
+        // Get back to catalog page
+        response.sendRedirect("/catalog");
+    }
+
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        LOGGER.info("Processing post request");
+
+        HttpSession session = request.getSession();
+
+        // Check if given session already contains open receipt
+        // Otherwise create new one
+        if (session.getAttribute("receiptId") != null) {
+            LOGGER.error("User with active check try to create additional");
+        }
+
+        //session.get
+        int receiptId = receiptDao.createReceipt(2);
+        session.setAttribute("receiptId", receiptId);
 
         // Get back to catalog page
         response.sendRedirect("/catalog");

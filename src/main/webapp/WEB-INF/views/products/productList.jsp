@@ -61,28 +61,8 @@
         </c:forEach>
     </table>
 
-
-    <ul class="pager">
-        <c:choose>
-            <c:when test="${page == 1}">
-                <li class="previous"><a>Previous</a></li>
-            </c:when>
-            <c:otherwise>
-                <li class="previous"><a href="${path}?pageSize=${pageSize}&page=${page-1}">Previous</a></li>
-            </c:otherwise>
-        </c:choose>
-
-        <c:choose>
-            <c:when test="${page == maxPage}">
-                <li class="next"><a>Next</a></li>
-            </c:when>
-            <c:otherwise>
-                <li class="next"><a href="${path}?pageSize=${pageSize}&page=${page+1}">Next</a></li>
-            </c:otherwise>
-        </c:choose>
-    </ul>
-
-
+    <jsp:include page="/WEB-INF/views/products/_productsPaginationGroup.jsp"></jsp:include>
+    
     <!-- Add products Modal -->
     <div class=" modal fade" id="addProductModal" role="dialog">
         <div class="modal-dialog">

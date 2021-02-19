@@ -12,10 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/products")
+@WebServlet({"/products", "/catalog"})
 public class ProductServlet extends HttpServlet {
     private static final int defaultFirstPageNumber = 1;
-    private static final int defaultNumberOfProductsOnPage = 3;
+    private static final int defaultNumberOfProductsOnPage = 5;
 
     private MysqlProductDaoImpl productDao;
     private static final Logger LOGGER = Logger.getLogger(ProductServlet.class);
@@ -29,7 +29,8 @@ public class ProductServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        LOGGER.info("Processing get request");
+        String servletPath = request.getServletPath();
+        LOGGER.info("Processing get request. Servlet path");
 
         // Getting parameters
         String paramPage = request.getParameter("page");
@@ -58,8 +59,17 @@ public class ProductServlet extends HttpServlet {
         request.setAttribute("maxPage", maxPage);
         request.setAttribute("products", products);
 
-        // Forward to productList
-        request.getRequestDispatcher("/WEB-INF/views/products/productList.jsp").forward(request, response);
+        if (servletPath.equals("/catalog")) {
+            LOGGER.info("Go to /catalog page");
+            request.getRequestDispatcher("/WEB-INF/views/catalog/catalogView.jsp").forward(request, response);
+        }
+
+        if (servletPath.equals("/products")) {
+            LOGGER.info("Go to /products page");
+
+            // Forward to productList
+            request.getRequestDispatcher("/WEB-INF/views/products/productList.jsp").forward(request, response);
+        }
 
     }
 }

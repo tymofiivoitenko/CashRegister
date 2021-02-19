@@ -1,7 +1,7 @@
 package dao.receipt;
 
-import model.ReceiptItem;
 import model.Receipt;
+import model.ReceiptItem;
 
 import java.util.List;
 
@@ -24,5 +24,9 @@ public interface ReceiptDao {
     boolean setReceiptStatus(int receiptId, String status);
 
     boolean closeReceipt(int receiptId);
+
+    int getReceiptsNumber();
+
+    List<Receipt> findReceipts(int page, int pageSize);
 
 }
