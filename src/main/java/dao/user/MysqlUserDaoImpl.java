@@ -1,6 +1,6 @@
 package dao.user;
 
-import model.User;
+import bean.User;
 import connection.DBManager;
 import org.apache.log4j.Logger;
 

@@ -1,9 +1,10 @@
-package model;
+package bean;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Receipt {
+public class Receipt implements Serializable {
     private int id;
     private LocalDateTime createdDate;
     private LocalDateTime closedDate;

@@ -44,7 +44,9 @@
                 <td>${product.quantity}</td>
                 <td>${product.unit}</td>
                 <td align="center">
-                    <a href="${pageContext.request.contextPath }/receipt?&action=buy&id=${product.id}">Buy</a>
+
+
+                    <a href="${pageContext.request.contextPath }/receipt?&action=addItem&id=${product.id}">Buy</a>
                 </td>
             </tr>
         </c:forEach>

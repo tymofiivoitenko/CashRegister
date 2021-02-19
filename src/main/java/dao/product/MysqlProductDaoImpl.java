@@ -1,7 +1,7 @@
 package dao.product;
 
 import connection.DBManager;
-import model.Product;
+import bean.Product;
 import org.apache.log4j.Logger;
 
 import java.io.FileInputStream;

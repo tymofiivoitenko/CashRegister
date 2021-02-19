@@ -1,7 +1,7 @@
 package servlets.product;
 
 import dao.product.MysqlProductDaoImpl;
-import model.Product;
+import bean.Product;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -13,18 +13,18 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet({"/products", "/catalog"})
-public class ProductServlet extends HttpServlet {
+public class AllProductsServlet extends HttpServlet {
     private static final int defaultFirstPageNumber = 1;
     private static final int defaultNumberOfProductsOnPage = 5;
 
     private MysqlProductDaoImpl productDao;
-    private static final Logger LOGGER = Logger.getLogger(ProductServlet.class);
+    private static final Logger LOGGER = Logger.getLogger(AllProductsServlet.class);
 
     public void init() {
         productDao = new MysqlProductDaoImpl();
     }
 
-    public ProductServlet() {
+    public AllProductsServlet() {
         super();
     }
 

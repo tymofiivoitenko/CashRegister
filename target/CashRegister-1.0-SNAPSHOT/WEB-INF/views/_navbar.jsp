@@ -36,23 +36,29 @@
                 <c:otherwise>
                     <c:choose>
                         <c:when test="${loginedUser.role == 'CASHIER'}">
-                            <form class="navbar-form navbar-left" action="${pageContext.request.contextPath}/vigil"
-                                  method="post">
+                            <div class="navbar-form navbar-left">
                                 <c:choose>
-                                    <c:when test="${empty vigil}">
-                                        <button type="submit" class="btn btn-success"><span
-                                                class="glyphicon glyphicon-play"></span>
-                                            Start Vigil
-                                        </button>
+                                    <c:when test="${empty cashBox}">
+                                        <form action="${pageContext.request.contextPath}/cashbox?action=start"
+                                              method="post">
+                                            <button type="submit" class="btn btn-success"><span
+                                                    class="glyphicon glyphicon-play"></span>
+                                                Start CashBox
+                                            </button>
+                                        </form>
                                     </c:when>
                                     <c:otherwise>
-                                        <button type="submit" class="btn btn-danger"><span
-                                                class="glyphicon glyphicon-stop"></span>
-                                            Stop Vigil
-                                        </button>
+                                        <form action="${pageContext.request.contextPath}/cashbox?&action=finish"
+                                              method="post">
+                                            <button type="submit" class="btn btn-danger"><span
+                                                    class="glyphicon glyphicon-stop"></span>
+                                                Close CashBox
+                                            </button>
+                                        </form>
                                     </c:otherwise>
                                 </c:choose>
-                            </form>
+                            </div>
+
                         </c:when>
                     </c:choose>
                     <li><a href="${pageContext.request.contextPath}/logout">

@@ -1,6 +1,6 @@
 package servlets.login;
 
-import model.User;
+import bean.User;
 import dao.user.MysqlUserDaoImpl;
 import dao.user.UserDao;
 import org.apache.commons.codec.digest.DigestUtils;

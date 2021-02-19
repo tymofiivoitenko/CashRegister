@@ -1,8 +1,10 @@
 package filter;
 
-import model.User;
+import bean.CashBox;
+import bean.User;
 import org.apache.log4j.Logger;
-import request.UserRoleRequestWrapper;
+import service.cashbox.CashBoxService;
+import service.cashbox.CashBoxServiceImpl;
 import utils.AppUtils;
 import utils.SecurityUtils;
 
@@ -15,10 +17,15 @@ import java.io.IOException;
 @WebFilter("/*")
 public class SecurityFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(SecurityFilter.class);
+    private CashBoxService cashBoxService;
 
     @Override
     public void destroy() {
+    }
 
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        cashBoxService = new CashBoxServiceImpl();
     }
 
     @Override
@@ -27,7 +34,7 @@ public class SecurityFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
 
-        LOGGER.info("Processing doFilter request. Invoked for page: " + request.getServletPath());
+        LOGGER.info("Processing doFilter request. Invoked for page: <" + request.getServletPath() + ">");
 
         String servletPath = request.getServletPath();
 
@@ -46,22 +53,17 @@ public class SecurityFilter implements Filter {
             return;
         }
 
-        HttpServletRequest wrapRequest = request;
-
         if (loginedUser != null) {
-            LOGGER.info("LoginedUser is not null");
+            LOGGER.info("User is not null. His role is: " + loginedUser.getRole());
+            if (loginedUser.getRole().equals("CASHIER")) {
+                LOGGER.info("Logined user is cashier. Check is cashier has active cashbox..");
 
-            // Get user Name
-            String userName = loginedUser.getUserName();
-
-            // Get user Roles
-            String role = loginedUser.getRole();
-
-            // Wrap old request by a new Request with userName and Roles information.
-            wrapRequest = new UserRoleRequestWrapper(userName, role, request);
+                CashBox cashBox = cashBoxService.getActiveCashBox(loginedUser.getId());
+                request.getSession().setAttribute("cashBox", cashBox);
+            }
         }
 
-        // Pages must be signed in.
+        // Pages must be signed in
         if (SecurityUtils.isSecurityPage(request)) {
             LOGGER.info("This page is secured: " + request.toString());
 
@@ -77,23 +79,25 @@ public class SecurityFilter implements Filter {
                 int redirectId = AppUtils.storeRedirectAfterLoginUrl(request.getSession(), requestUri);
 
                 // Redirect
-                response.sendRedirect(wrapRequest.getContextPath() + "/login?redirectId=" + redirectId);
+                response.sendRedirect(request.getContextPath() + "/login?redirectId=" + redirectId);
                 return;
             }
 
+            // Get user Role
+            String role = loginedUser.getRole();
+
             // Check if the user has a valid role?
-            boolean hasPermission = SecurityUtils.hasPermission(wrapRequest);
+            boolean hasPermission = SecurityUtils.hasPermission(request, role);
             if (!hasPermission) {
                 LOGGER.info("User doesn't have permission for this page. Forward to 'Access denied' page....");
-                RequestDispatcher dispatcher //
-                        = request.getServletContext().getRequestDispatcher("/WEB-INF/views/error/accessDeniedView.jsp");
 
-                dispatcher.forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/error/accessDeniedExceptionView.jsp")
+                        .forward(request, response);
                 return;
             }
         }
 
-        chain.doFilter(wrapRequest, response);
+        chain.doFilter(request, response);
     }
 
 }

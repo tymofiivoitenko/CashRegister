@@ -2,7 +2,7 @@ package servlets.receipt;
 
 import dao.receipt.MysqlReceiptDaoImpl;
 import dao.receipt.ReceiptDao;
-import model.Receipt;
+import bean.Receipt;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;

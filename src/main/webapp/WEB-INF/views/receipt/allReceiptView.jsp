@@ -11,7 +11,7 @@
 
 <html>
 <head>
-    <title>All Receipt Page</title>
+    <title>All Receipt</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -27,11 +27,15 @@
 
     <br>
 
-    <div class="button-group text-right">
-        <form action="${pageContext.request.contextPath}/receipt" method="post">
-            <button type="submit" class="btn btn-success">Add new receipt</button>
-        </form>
-    </div>
+    <c:choose>
+        <c:when test="${not empty cashBox }">
+            <div class="button-group text-right">
+                <form action="${pageContext.request.contextPath}/receipt?&action=createReceipt" method="post">
+                    <button type="submit" class="btn btn-success">Add new receipt</button>
+                </form>
+            </div>
+        </c:when>
+    </c:choose>
 
     <form class="form-horizontal" method="POST">
         <table cellpadding="3" cellspacing="2" border="2" class="text-center table table-striped table-hover">
@@ -47,7 +51,7 @@
             <c:forEach var="receipt" items="${receipts}">
                 <tr>
                     <td>${receipt.id}</td>
-                    <td>${receipt.cashBox.vigil.user.userName}</td>
+                    <td>${receipt.cashBox.user.userName}</td>
                     <td><fmt:parseDate value="${receipt.createdDate}" pattern="yyyy-MM-dd'T'HH:mm:ss"
                                        var="createdParsedDateTime" type="both"/>
                         <fmt:formatDate pattern="dd.MM.yyyy HH:mm:ss" value="${createdParsedDateTime}"/></td>
@@ -81,7 +85,6 @@
             </c:otherwise>
         </c:choose>
     </ul>
-
 
 </div>
 

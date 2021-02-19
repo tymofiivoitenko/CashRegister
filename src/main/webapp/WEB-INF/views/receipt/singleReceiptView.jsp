@@ -23,7 +23,7 @@
     <h3 class="text-center">Receipt</h3>
     <hr>
 
-    <form class="form-horizontal" action="${pageContext.request.contextPath}/receipt" method="POST">
+    <form class="form-horizontal" action="${pageContext.request.contextPath}/receipt?&action=closeReceipt" method="post">
         <div class="container text-left">
             <a class="btn btn-su" href="${pageContext.request.contextPath }/catalog" role="button">Continue Shopping</a>
         </div>
@@ -40,18 +40,20 @@
             </tr>
             <c:set var="total" value="0"></c:set>
 
-            <c:forEach var="receiptItem" items="${sessionScope.receipt}">
-                <c:set var="total" value="${total + receiptItem.product.price * receiptItem.quantity }"></c:set>
+            <c:forEach var="receiptItem" items="${receiptItems}">
+                <c:set var="total" value="${total + receiptItem.product.price * receiptItem.quantity}"></c:set>
                 <tr>
                     <td align="center">
-                        <a href="${pageContext.request.contextPath }/receipt?action=remove&id=${receiptItem.id}">Remove</a>
+
+                        <a href="${pageContext.request.contextPath }/receipt?action=removeItem&id=${receiptItem.id}">Remove</a>
                     </td>
                     <td class="id">${receiptItem.id}</td>
                     <td style="width: 55%">${receiptItem.product.name}</td>
                     <td class="price">${receiptItem.product.price}</td>
                     <td>
                         <div class="col-sm-9">
-                            <input type="number" step="0.1" class="quantity" value="${receiptItem.quantity}" name="qty"/>
+                            <input type="number" step="0.1" class="quantity" value="${receiptItem.quantity}"
+                                   name="qty"/>
                         </div>
                     </td>
                     <td class="total_price">$${receiptItem.product.price * receiptItem.quantity}</td>
@@ -63,7 +65,7 @@
             </tr>
         </table>
         <div class="container text-right">
-            <button type="submit" class="btn btn-success">Submit receipt</button>
+            <button type="submit" class="btn btn-success">Pay receipt</button>
         </div>
     </form>
 </div>
@@ -74,7 +76,7 @@
     function applyChanges() {
         var qty = parseFloat($(this).val());
         var id = $(this).parents('tr').find(".id").text();
-        window.open('${pageContext.request.contextPath }/receipt?action=applyChanges&id=' + id + '&quantity=' + qty, "_self");
+        window.open('${pageContext.request.contextPath }/receipt?action=changeItemQuantity&id=' + id + '&quantity=' + qty, "_self");
     }
 </script>
 </body>

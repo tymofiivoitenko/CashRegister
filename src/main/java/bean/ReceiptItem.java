@@ -1,6 +1,8 @@
-package model;
+package bean;
 
-public class ReceiptItem {
+import java.io.Serializable;
+
+public class ReceiptItem implements Serializable {
 
     private int id;
     private Product product;

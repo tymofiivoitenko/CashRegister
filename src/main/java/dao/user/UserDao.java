@@ -1,6 +1,6 @@
 package dao.user;
 
-import model.User;
+import bean.User;
 
 public interface UserDao {
     // Find a User by userName

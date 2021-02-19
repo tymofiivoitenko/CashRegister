@@ -1,7 +1,7 @@
 package dao.receipt;
 
+import bean.*;
 import connection.DBManager;
-import model.*;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -25,32 +25,31 @@ public class MysqlReceiptDaoImpl implements ReceiptDao {
     private static final String DELETE_ITEM_SQL = "DELETE FROM receipt_items WHERE id = ?;";
     private static final String SELECT_RECEIPT_NUMBER = "SELECT COUNT(*) FROM receipts;";
     private static final String SELECT_LAST_INSERTED_RECEIPT_ID = "SELECT last_insert_id() as last_id from receipts;";
-    private static final String SELECT_ALL_RECEIPTS = "SELECT rs.id, rs.cashbox_id, cbox.vigil_id, users.username, rs.created_date, " +
+    private static final String SELECT_ALL_RECEIPTS = "SELECT rs.id, rs.cashbox_id, users.username, rs.created_date, " +
             "rs.closed_date, SUM(prs.price * ris.quantity) total_price, rs.status " +
             "FROM receipts rs " +
             "INNER JOIN receipt_items ris ON rs.id = ris.receipt_id " +
             "INNER JOIN cashboxes cbox ON rs.cashbox_id = cbox.id " +
             "INNER JOIN products prs ON ris.product_id = prs.id " +
-            "INNER JOIN vigils ON cbox.vigil_id = vigils.id " +
-            "INNER JOIN users ON vigils.user_id = users.id " +
-            "GROUP BY rs.id;";
-
-    private static final String SELECT_LIMITED_NUMBER_OF_RECEIPTS = "SELECT rs.id, rs.cashbox_id, cbox.vigil_id, users.username, rs.created_date, " +
-            "rs.closed_date, SUM(prs.price * ris.quantity) total_price, rs.status " +
-            "FROM receipts rs " +
-            "INNER JOIN receipt_items ris ON rs.id = ris.receipt_id " +
-            "INNER JOIN cashboxes cbox ON rs.cashbox_id = cbox.id " +
-            "INNER JOIN products prs ON ris.product_id = prs.id " +
-            "INNER JOIN vigils ON cbox.vigil_id = vigils.id " +
-            "INNER JOIN users ON vigils.user_id = users.id " +
+            "INNER JOIN users ON cbox.user_id = users.id " +
             "GROUP BY rs.id " +
-            "ORDER BY id limit ? OFFSET ?;";
+            "ORDER BY rs.created_date DESC;";
+
+    private static final String SELECT_LIMITED_NUMBER_OF_RECEIPTS = "SELECT rs.id, rs.cashbox_id, users.username, rs.created_date, " +
+            "rs.closed_date, SUM(prs.price * ris.quantity) total_price, rs.status " +
+            "FROM receipts rs " +
+            "INNER JOIN receipt_items ris ON rs.id = ris.receipt_id " +
+            "INNER JOIN cashboxes cbox ON rs.cashbox_id = cbox.id " +
+            "INNER JOIN products prs ON ris.product_id = prs.id " +
+            "INNER JOIN users ON cbox.user_id = users.id " +
+            "GROUP BY rs.id " +
+            "ORDER BY rs.created_date DESC LIMIT ? OFFSET ?;";
 
     private static final String SELECT_ITEM_WITH_GIVEN_PRODUCT_ID = "SELECT products.name, products.price, products.unit, receipt_items.id, receipt_items.quantity " +
             "FROM receipt_items " +
             "INNER JOIN products ON products.id = receipt_items.product_id " +
             "WHERE receipt_id = ? AND product_id = ?;";
-    private static final String SELECT_All_ITEMS_FOR_RECEIPT = "SELECT products.name, products.price, products.unit, receipt_items.id, receipt_items.quantity " +
+    private static final String SELECT_All_ITEMS_FOR_RECEIPT = "SELECT receipt_items.receipt_id, products.name, products.price, products.unit, receipt_items.id, receipt_items.quantity " +
             "FROM receipt_items " +
             "INNER JOIN products ON products.id = receipt_items.product_id " +
             "WHERE receipt_id = ?;";
@@ -277,7 +276,7 @@ public class MysqlReceiptDaoImpl implements ReceiptDao {
     }
 
     @Override
-    public ReceiptItem getItemByProduct(int receiptId, int productId) {
+    public ReceiptItem getReceiptItemByProduct(int receiptId, int productId) {
         LOGGER.info("Select all item from receipt: <" + receiptId + "> with product: ");
 
         ReceiptItem receiptItem = null;
@@ -321,8 +320,8 @@ public class MysqlReceiptDaoImpl implements ReceiptDao {
             int quantity = rs.getInt("quantity");
             int itemId = rs.getInt("id");
 
-            Product productToAdd = new Product(productName, price, unit);
-            receiptItems.add(new ReceiptItem(itemId, productToAdd, quantity));
+            Product product = new Product(productName, price, unit);
+            receiptItems.add(new ReceiptItem(itemId, product, quantity));
         }
 
         return receiptItems;
@@ -335,7 +334,6 @@ public class MysqlReceiptDaoImpl implements ReceiptDao {
         // Step 4: Process the ResultSet object.
         while (rs.next()) {
             int receiptId = rs.getInt("id");
-            int vigilId = rs.getInt("vigil_id");
             int cashBoxId = rs.getInt("cashbox_id");
             //int status = rs.getInt("status");
             String userName = rs.getString("userName");
@@ -356,8 +354,7 @@ public class MysqlReceiptDaoImpl implements ReceiptDao {
             Double totalPrice = rs.getDouble("total_price");
             String status = rs.getString("status");
 
-            Vigil vigil = new Vigil(vigilId, new User(userName));
-            CashBox cashBox = new CashBox(cashBoxId, vigil, "myMachine", "ok");
+            CashBox cashBox = new CashBox(cashBoxId, new User(userName));
 
             receipts.add(new Receipt(receiptId, createdDate, closedDate, cashBox, totalPrice, status));
         }

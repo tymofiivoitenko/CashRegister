@@ -1,7 +1,7 @@
 package servlets.product;
 
 import dao.product.MysqlProductDaoImpl;
-import model.Product;
+import bean.Product;
 import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;

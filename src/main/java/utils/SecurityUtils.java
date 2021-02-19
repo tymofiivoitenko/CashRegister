@@ -24,20 +24,23 @@ public class SecurityUtils {
     }
 
     // Check if this 'request' has a 'valid role'?
-    public static boolean hasPermission(HttpServletRequest request) {
+    public static boolean hasPermission(HttpServletRequest request, String role) {
         String urlPattern = UrlPatternUtils.getUrlPattern(request);
 
+        // Check if given role exists in security config
         Set<String> allRoles = SecurityConfig.getAllAppRoles();
-
-        for (String role : allRoles) {
-            if (!request.isUserInRole(role)) {
-                continue;
-            }
-            List<String> urlPatterns = SecurityConfig.getUrlPatternsForRole(role);
-            if (urlPatterns != null && urlPatterns.contains(urlPattern)) {
-                return true;
-            }
+        if (!allRoles.contains(role)) {
+            throw new IllegalStateException();
         }
+
+        // Fetch all urlPatterns, which can be accessed by this role
+        List<String> urlPatterns = SecurityConfig.getUrlPatternsForRole(role);
+
+        // Check if user can access this url
+        if (urlPatterns != null && urlPatterns.contains(urlPattern)) {
+            return true;
+        }
+
         return false;
     }
 }

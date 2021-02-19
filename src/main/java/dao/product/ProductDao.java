@@ -1,6 +1,6 @@
 package dao.product;
 
-import model.Product;
+import bean.Product;
 
 import java.util.List;
 
